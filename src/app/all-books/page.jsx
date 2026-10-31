@@ -154,7 +154,7 @@ async function BookCatalog() {
 
             <CardContent className="mt-auto px-3 pb-2">
               <Link
-                href={`/books/${encodeURIComponent(id)}`}
+                href={`/all-books/${encodeURIComponent(id)}`}
                 className="flex h-8 w-full items-center justify-center rounded-md bg-emerald-300 px-3 text-xs font-medium text-zinc-950 transition-colors hover:bg-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
               >
                 View Details

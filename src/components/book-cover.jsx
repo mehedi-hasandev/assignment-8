@@ -11,7 +11,13 @@ const coverStyles = [
   "from-amber-950 via-amber-800 to-yellow-600",
 ];
 
-export default function BookCover({ imageUrl, title, author, index }) {
+export default function BookCover({
+  imageUrl,
+  title,
+  author,
+  index,
+  aspectClass = "aspect-[2/3]",
+}) {
   const [imageFailed, setImageFailed] = useState(false);
 
   if (!imageUrl || imageFailed) {
@@ -19,7 +25,7 @@ export default function BookCover({ imageUrl, title, author, index }) {
       <div
         role="img"
         aria-label={`Cover of ${title}`}
-        className={`flex aspect-[2/3] flex-col justify-between bg-gradient-to-br p-4 text-white ${
+        className={`flex ${aspectClass} flex-col justify-between bg-gradient-to-br p-4 text-white ${
           coverStyles[index % coverStyles.length]
         }`}
       >
@@ -37,7 +43,7 @@ export default function BookCover({ imageUrl, title, author, index }) {
   }
 
   return (
-    <div className="relative aspect-[2/3] bg-zinc-800">
+    <div className={`relative ${aspectClass} bg-zinc-800`}>
       <Image
         src={imageUrl}
         alt={`Cover of ${title}`}

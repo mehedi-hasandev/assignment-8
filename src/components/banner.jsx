@@ -73,7 +73,7 @@ export default function Banner() {
                     {slide.description}
                   </p>
                   <Link
-                    href="/books"
+                    href="/all-books"
                     className="mt-5 inline-flex rounded-md bg-emerald-300 px-4 py-2 text-xs font-semibold text-[#183328] shadow-sm transition-colors hover:bg-emerald-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     Browse Books
