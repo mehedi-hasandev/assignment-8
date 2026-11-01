@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BookCover from "@/components/book-cover";
+import BookBorrowDialog from "@/components/book-borrow-dialog";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -83,13 +84,6 @@ export default async function BookDetailsPage({ params }) {
   const copiesLeft = Number(
     book.availableCopies ?? book.copiesLeft ?? book.totalCopies,
   );
-  const canRequestBook =
-    ownerEmail.includes("@") && Number.isFinite(copiesLeft) && copiesLeft > 0;
-  const borrowLink = `mailto:${ownerEmail}?subject=${encodeURIComponent(
-    `Borrow request: ${title}`,
-  )}&body=${encodeURIComponent(
-    `Hello ${ownerName},\n\nI would like to borrow "${title}" by ${author}.`,
-  )}`;
 
   return (
     <main className="flex-1 bg-[#0b1510] px-4 py-8 text-white sm:px-6 sm:py-12">
@@ -116,54 +110,16 @@ export default async function BookDetailsPage({ params }) {
             {description}
           </p>
 
-          <section
-            aria-label="Book owner and availability"
-            className="mt-6 grid gap-5 rounded-xl border border-white/5 bg-[#142019] p-4 sm:grid-cols-2 sm:p-5"
-          >
-            <div className="min-w-0">
-              <p className="text-xs text-white/50">Added by</p>
-              <p className="mt-1 truncate text-sm font-medium text-white/90">
-                {ownerName}
-              </p>
-              {ownerEmail && (
-                <p className="mt-1 truncate text-xs text-white/50">
-                  {ownerEmail}
-                </p>
-              )}
-            </div>
-            <div>
-              <p className="text-xs text-white/50">Copies left</p>
-              <p className="mt-1 text-sm font-medium text-white/90">
-                {Number.isFinite(copiesLeft) ? copiesLeft : "Not provided"}
-              </p>
-            </div>
-          </section>
-
-          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3">
-            {canRequestBook ? (
-              <a
-                href={borrowLink}
-                className="inline-flex min-h-10 items-center justify-center rounded-md bg-emerald-300 px-4 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
-              >
-                Borrow This Book
-              </a>
-            ) : (
-              <button
-                type="button"
-                disabled
-                title="Borrow requests are not available for this book yet."
-                className="inline-flex min-h-10 cursor-not-allowed items-center justify-center rounded-md bg-emerald-300/50 px-4 py-2 text-sm font-semibold text-zinc-950/70"
-              >
-                Borrow This Book
-              </button>
-            )}
-            <Link
-              href="/all-books"
-              className="text-sm text-white/65 transition-colors hover:text-emerald-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-300"
-            >
-              Back to all books
-            </Link>
-          </div>
+          <BookBorrowDialog
+            bookId={id}
+            bookTitle={title}
+            bookImage={imageUrl}
+            authorName={author}
+            category={category}
+            ownerName={ownerName}
+            ownerEmail={ownerEmail}
+            initialCopies={copiesLeft}
+          />
         </div>
       </article>
     </main>
