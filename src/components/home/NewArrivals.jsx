@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import BookCover from "@/components/book-cover";
+import BookDetailsButton from "@/components/book-details-button";
+import { sortBooksNewestFirst } from "@/lib/sort-books";
 
-const NEW_ARRIVALS_API_URL =
-  "http://localhost:8000/books?sort=latest&limit=6";
+const NEW_ARRIVALS_API_URL = "http://localhost:8000/books?limit=6";
 
 function NewArrivalsSkeleton() {
   return (
@@ -76,7 +77,7 @@ async function LatestBooks() {
 
   let books;
   try {
-    books = getBookList(await response.json());
+    books = sortBooksNewestFirst(getBookList(await response.json()));
   } catch (error) {
     return (
       <p role="alert" className="text-center text-sm text-red-200">
@@ -131,12 +132,10 @@ async function LatestBooks() {
               <p className="mt-1 truncate text-sm text-zinc-400" title={author}>
                 by {author}
               </p>
-              <Link
-                href={`/all-books/${encodeURIComponent(id)}`}
+              <BookDetailsButton
+                bookId={id}
                 className="mt-5 inline-flex min-h-10 items-center justify-center rounded-md bg-emerald-300 px-4 text-sm font-medium text-zinc-950 transition-colors hover:bg-emerald-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
-              >
-                View Details
-              </Link>
+              />
             </div>
           </article>
         );
