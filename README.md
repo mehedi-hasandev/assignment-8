@@ -18,6 +18,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
+## Authentication
+
+Email/password authentication uses Better Auth and MongoDB. Configure
+`MONGODB_URI`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` in the environment.
+Google sign-in is enabled when both `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET` are configured.
+
+Private pages and write requests are protected by Better Auth sessions in
+Next.js. API requests to the Express backend are made by authenticated Next.js
+handlers.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

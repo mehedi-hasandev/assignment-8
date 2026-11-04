@@ -1,11 +1,12 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import {
   Card,
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
 import BookCover from "@/components/book-cover";
+import BookDetailsButton from "@/components/book-details-button";
+import { sortBooksNewestFirst } from "@/lib/sort-books";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -20,14 +21,14 @@ function BookGridSkeleton() {
       {Array.from({ length: 10 }, (_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-lg border border-white/10 bg-[#111d17]"
+          className="overflow-hidden rounded-lg border border-[#781868]/20 bg-white"
         >
-          <div className="aspect-[2/3] animate-pulse bg-white/10" />
+          <div className="aspect-[2/3] animate-pulse bg-slate-100" />
           <div className="space-y-3 p-3">
-            <div className="h-3 w-14 animate-pulse rounded bg-white/10" />
-            <div className="h-4 w-3/4 animate-pulse rounded bg-white/10" />
-            <div className="h-3 w-1/2 animate-pulse rounded bg-white/10" />
-            <div className="h-8 animate-pulse rounded bg-white/10" />
+            <div className="h-3 w-14 animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
+            <div className="h-3 w-1/2 animate-pulse rounded bg-slate-100" />
+            <div className="h-8 animate-pulse rounded bg-slate-100" />
           </div>
         </div>
       ))}
@@ -78,7 +79,7 @@ async function fetchBooks() {
     );
   }
 
-  return getBookList(await response.json());
+  return sortBooksNewestFirst(getBookList(await response.json()));
 }
 
 async function BookCatalog() {
@@ -98,19 +99,19 @@ async function BookCatalog() {
     return (
       <div
         role="alert"
-        className="rounded-xl border border-red-400/20 bg-red-950/30 px-6 py-10 text-center"
+        className="rounded-xl border border-red-400/20 bg-red-50 px-6 py-10 text-center"
       >
-        <h2 className="font-semibold text-red-200">Unable to load books</h2>
-        <p className="mt-2 text-sm text-red-100/70">{errorMessage}</p>
+        <h2 className="font-semibold text-red-800">Unable to load books</h2>
+        <p className="mt-2 text-sm text-red-700">{errorMessage}</p>
       </div>
     );
   }
 
   if (books.length === 0) {
     return (
-      <div className="rounded-xl border border-white/10 bg-[#111d17] px-6 py-14 text-center">
+      <div className="rounded-xl border border-[#781868]/20 bg-white px-6 py-14 text-center">
         <h2 className="text-lg font-semibold">No books yet</h2>
-        <p className="mt-2 text-sm text-white/60">
+        <p className="mt-2 text-sm text-slate-600">
           The library is waiting for its first book.
         </p>
       </div>
@@ -133,7 +134,7 @@ async function BookCatalog() {
         return (
           <Card
             key={id}
-            className="h-full gap-0 overflow-hidden rounded-lg border border-white/10 bg-[#111d17] py-0 text-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-lg hover:shadow-black/20"
+            className="h-full gap-0 overflow-hidden rounded-lg border border-[#781868]/20 bg-white py-0 text-slate-900 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-lg hover:shadow-black/20"
           >
             <BookCover
               imageUrl={imageUrl}
@@ -142,23 +143,21 @@ async function BookCatalog() {
               index={index}
             />
 
-            <CardHeader className="min-w-0 gap-1 px-3 pt-3 pb-1">
-              <p className="truncate text-[10px] text-white/60">{category}</p>
+            <CardHeader className="min-w-0 gap-2 px-4 pt-4 pb-1">
+              <p className="truncate text-[10px] text-slate-600">{category}</p>
               <h2 className="truncate text-sm font-semibold" title={title}>
                 {title}
               </h2>
-              <p className="truncate text-xs text-white/55" title={author}>
+              <p className="truncate text-xs text-slate-600" title={author}>
                 by {author}
               </p>
             </CardHeader>
 
-            <CardContent className="mt-auto px-3 pb-2">
-              <Link
-                href={`/all-books/${encodeURIComponent(id)}`}
-                className="flex h-8 w-full items-center justify-center rounded-md bg-emerald-300 px-3 text-xs font-medium text-zinc-950 transition-colors hover:bg-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
-              >
-                View Details
-              </Link>
+            <CardContent className="mt-auto px-4 pt-3 pb-4">
+              <BookDetailsButton
+                bookId={id}
+                className="flex h-8 w-full items-center justify-center rounded-md bg-[#41283d] px-3 text-xs font-medium text-white transition-colors hover:bg-[#50284b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#41283d]"
+              />
             </CardContent>
           </Card>
         );
@@ -169,12 +168,12 @@ async function BookCatalog() {
 
 export default function AllBooksPage() {
   return (
-    <main className="min-h-[70vh] flex-1 bg-[#0b1510] text-white">
-      <header className="border-b border-white/10 bg-[#17241d] px-4 py-4 text-center">
+    <main className="min-h-[70vh] flex-1 bg-white text-slate-900">
+      <header className="border-b border-[#781868]/20 bg-orange-50 px-4 py-4 text-center">
         <h1 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
           All Books
         </h1>
-        <p className="mt-1 text-[11px] text-white/55 sm:text-xs">
+        <p className="mt-1 text-[11px] text-slate-600 sm:text-xs">
           Every book on the BookNook shelf.
         </p>
       </header>

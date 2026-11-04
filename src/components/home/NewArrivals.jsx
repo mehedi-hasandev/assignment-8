@@ -16,14 +16,14 @@ function NewArrivalsSkeleton() {
       {Array.from({ length: 6 }, (_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-xl border border-white/10 bg-[#111d17]"
+          className="overflow-hidden rounded-xl border border-[#781868]/20 bg-white"
         >
-          <div className="aspect-[2/3] animate-pulse bg-white/10" />
+          <div className="aspect-[2/3] animate-pulse bg-slate-100" />
           <div className="space-y-3 p-4">
-            <div className="h-4 w-20 animate-pulse rounded bg-white/10" />
-            <div className="h-5 w-3/4 animate-pulse rounded bg-white/10" />
-            <div className="h-4 w-1/2 animate-pulse rounded bg-white/10" />
-            <div className="h-10 animate-pulse rounded bg-white/10" />
+            <div className="h-4 w-20 animate-pulse rounded bg-slate-100" />
+            <div className="h-5 w-3/4 animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-1/2 animate-pulse rounded bg-slate-100" />
+            <div className="h-10 animate-pulse rounded bg-slate-100" />
           </div>
         </div>
       ))}
@@ -61,7 +61,7 @@ async function LatestBooks() {
     response = await fetch(NEW_ARRIVALS_API_URL, { cache: "no-store" });
   } catch {
     return (
-      <p role="alert" className="text-center text-sm text-red-200">
+      <p role="alert" className="text-center text-sm text-red-800">
         Could not connect to the book server. Please try again later.
       </p>
     );
@@ -69,7 +69,7 @@ async function LatestBooks() {
 
   if (!response.ok) {
     return (
-      <p role="alert" className="text-center text-sm text-red-200">
+      <p role="alert" className="text-center text-sm text-red-800">
         The book server returned an error ({response.status}).
       </p>
     );
@@ -80,7 +80,7 @@ async function LatestBooks() {
     books = sortBooksNewestFirst(getBookList(await response.json()));
   } catch (error) {
     return (
-      <p role="alert" className="text-center text-sm text-red-200">
+      <p role="alert" className="text-center text-sm text-red-800">
         {error instanceof Error
           ? error.message
           : "The books API returned an invalid response."}
@@ -90,7 +90,7 @@ async function LatestBooks() {
 
   if (books.length === 0) {
     return (
-      <p className="rounded-xl border border-white/10 bg-[#111d17] px-6 py-10 text-center text-sm text-white/60">
+      <p className="rounded-xl border border-[#781868]/20 bg-white px-6 py-10 text-center text-sm text-slate-600">
         No books have been added to the library yet.
       </p>
     );
@@ -112,7 +112,7 @@ async function LatestBooks() {
         return (
           <article
             key={id}
-            className="flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-[#111d17] text-white transition duration-200 hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-lg hover:shadow-black/20"
+            className="flex h-full flex-col overflow-hidden rounded-xl border border-[#781868]/20 bg-white text-slate-900 transition duration-200 hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-lg hover:shadow-black/20"
           >
             <BookCover
               imageUrl={imageUrl}
@@ -123,18 +123,18 @@ async function LatestBooks() {
             />
 
             <div className="flex flex-1 flex-col p-4">
-              <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-1 text-xs font-medium text-emerald-200">
+              <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-1 text-xs font-medium text-orange-800">
                 {category}
               </span>
               <h3 className="mt-3 truncate font-semibold" title={title}>
                 {title}
               </h3>
-              <p className="mt-1 truncate text-sm text-zinc-400" title={author}>
+              <p className="mt-1 truncate text-sm text-slate-600" title={author}>
                 by {author}
               </p>
               <BookDetailsButton
                 bookId={id}
-                className="mt-5 inline-flex min-h-10 items-center justify-center rounded-md bg-emerald-300 px-4 text-sm font-medium text-zinc-950 transition-colors hover:bg-emerald-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+                className="mt-5 inline-flex min-h-10 items-center justify-center rounded-md bg-[#41283d] px-4 text-sm font-medium text-white transition-colors hover:bg-[#50284b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#41283d]"
               />
             </div>
           </article>
@@ -170,7 +170,7 @@ export default function NewArrivals() {
         <div className="mt-8 text-center">
           <Link
             href="/all-books"
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-emerald-300/50 px-5 text-sm font-medium text-emerald-200 transition-colors hover:border-emerald-300 hover:bg-emerald-300 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+            className="inline-flex min-h-10 items-center justify-center rounded-md bg-[#41283d] px-5 text-sm font-medium text-white transition-colors hover:bg-[#50284b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#41283d]"
           >
             See All Books
           </Link>

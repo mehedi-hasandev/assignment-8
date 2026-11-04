@@ -10,8 +10,8 @@ export default function Home() {
     <main className="flex-1 bg-background text-foreground">
       <Banner />
       <NewArrivals />
-      <ReaderReviews />
       <LibraryFAQ />
+      <ReaderReviews />
     </main>
   );
 }

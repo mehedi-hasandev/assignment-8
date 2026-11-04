@@ -34,35 +34,42 @@ export function LibraryFAQ() {
   return (
     <section
       aria-labelledby="library-faq-title"
-      className="px-4 pb-20 pt-4 sm:px-6 sm:pb-24"
+      className="bg-[#fcf8fc] px-4 py-16 sm:px-6 sm:py-20"
     >
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-8 text-center sm:mb-10">
+      <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div className="max-w-md">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-[#702068]">
+            F. A. Q
+          </p>
           <h2
             id="library-faq-title"
-            className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
+            className="font-serif text-3xl font-semibold leading-tight tracking-tight text-[#201028] sm:text-4xl"
           >
             Frequently Asked Questions
           </h2>
-          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+          <p className="mt-4 text-sm leading-6 text-muted-foreground sm:text-base">
             Everything you need to know about borrowing and lending.
           </p>
+          <div
+            aria-hidden="true"
+            className="mt-6 h-1 w-20 -skew-x-45 bg-[#781868]"
+          />
         </div>
 
         <Accordion
           multiple={false}
-          className="rounded-xl border border-border bg-card/60 px-5 backdrop-blur sm:px-7"
+          className="w-full bg-white px-5 py-4 sm:px-8 sm:py-6"
         >
           {questions.map(({ question, answer }, index) => (
             <AccordionItem
               key={question}
               value={`question-${index + 1}`}
-              className="border-border"
+              className="border-[#781868]/10"
             >
-              <AccordionTrigger className="py-5 text-left text-sm font-medium text-card-foreground hover:no-underline sm:text-base">
+              <AccordionTrigger className="items-center gap-4 py-3 text-sm font-medium text-[#201028] hover:no-underline sm:gap-5 sm:py-4 sm:text-base [&_[data-slot=accordion-trigger-icon]]:size-8 [&_[data-slot=accordion-trigger-icon]]:rounded-sm [&_[data-slot=accordion-trigger-icon]]:bg-[#201028] [&_[data-slot=accordion-trigger-icon]]:p-1.5 [&_[data-slot=accordion-trigger-icon]]:text-white">
                 {question}
               </AccordionTrigger>
-              <AccordionContent className="pb-5 text-sm leading-6 text-muted-foreground">
+              <AccordionContent className="pb-4 pl-12 text-sm leading-6 text-muted-foreground sm:pl-13">
                 {answer}
               </AccordionContent>
             </AccordionItem>

@@ -29,7 +29,30 @@ export default function RootLayout({ children }) {
         <Navbar />
         <div className="flex flex-1 flex-col">{children}</div>
         <Footer />
-        <Toaster position="bottom-right" theme="dark" richColors />
+        <Toaster
+          position="bottom-right"
+          theme="dark"
+          richColors
+          style={{
+            "--normal-bg": "#41283d",
+            "--normal-bg-hover": "#50284b",
+            "--normal-border": "#702068",
+            "--normal-border-hover": "#781868",
+            "--normal-text": "#ffffff",
+            "--success-bg": "#41283d",
+            "--success-border": "#702068",
+            "--success-text": "#ffffff",
+            "--info-bg": "#41283d",
+            "--info-border": "#702068",
+            "--info-text": "#ffffff",
+            "--warning-bg": "#41283d",
+            "--warning-border": "#702068",
+            "--warning-text": "#ffffff",
+            "--error-bg": "#41283d",
+            "--error-border": "#702068",
+            "--error-text": "#ffffff",
+          }}
+        />
       </body>
     </html>
   );

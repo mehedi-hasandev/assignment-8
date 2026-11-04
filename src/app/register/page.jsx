@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 const inputClassName =
-  "mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/20";
+  "mt-2 w-full rounded-lg border border-[#781868]/20 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/20";
 
 function getPasswordError(password) {
   if (password.length < 6) {
@@ -103,8 +103,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-[#0b1510] px-4 py-10 text-white sm:px-6">
-      <section className="w-full max-w-md rounded-2xl border border-white/10 bg-[#111d17] p-6 shadow-2xl shadow-black/20 sm:p-8">
+    <main className="flex flex-1 items-center justify-center bg-white px-4 py-10 text-slate-900 sm:px-6">
+      <section className="w-full max-w-md rounded-2xl border border-[#781868]/20 bg-white p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="mb-7 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
             Join BookNook
@@ -112,7 +112,7 @@ export default function RegisterPage() {
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight">
             Create your account
           </h1>
-          <p className="mt-2 text-sm text-white/55">
+          <p className="mt-2 text-sm text-slate-600">
             Build your reading community, one book at a time.
           </p>
         </div>
@@ -182,12 +182,12 @@ export default function RegisterPage() {
               <p
                 id="register-password-error"
                 role="alert"
-                className="mt-2 text-sm text-red-300"
+                className="mt-2 text-sm text-red-700"
               >
                 {passwordError}
               </p>
             ) : (
-              <p id="password-hint" className="mt-2 text-xs text-white/45">
+              <p id="password-hint" className="mt-2 text-xs text-slate-500">
                 Use at least 6 characters, including uppercase and lowercase
                 letters.
               </p>
@@ -197,7 +197,7 @@ export default function RegisterPage() {
           {formError && (
             <p
               role="alert"
-              className="rounded-lg border border-red-400/20 bg-red-950/30 px-3 py-2 text-sm text-red-200"
+              className="rounded-lg border border-red-400/20 bg-red-50 px-3 py-2 text-sm text-red-800"
             >
               {formError}
             </p>
@@ -206,7 +206,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-300 px-4 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-300 px-4 py-3 text-sm font-semibold text-[#201028] transition-colors hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting && (
               <LoaderCircle aria-hidden="true" size={17} className="animate-spin" />
@@ -215,32 +215,32 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-white/35">
-          <span className="h-px flex-1 bg-white/10" />
+        <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
+          <span className="h-px flex-1 bg-slate-100" />
           <span>or</span>
-          <span className="h-px flex-1 bg-white/10" />
+          <span className="h-px flex-1 bg-slate-100" />
         </div>
 
         <button
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-3 rounded-lg border border-orange-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <span
             aria-hidden="true"
-            className="flex size-5 items-center justify-center rounded-full bg-white text-sm font-bold text-[#4285f4]"
+            className="flex size-5 items-center justify-center rounded-full bg-white text-sm font-bold text-[#201028]"
           >
             G
           </span>
           Continue with Google
         </button>
 
-        <p className="mt-6 text-center text-sm text-white/55">
+        <p className="mt-6 text-center text-sm text-slate-600">
           Already have an account?{" "}
           <Link
             href="/login"
-            className="font-medium text-emerald-300 transition-colors hover:text-emerald-200"
+            className="font-medium text-emerald-300 transition-colors hover:text-orange-800"
           >
             Log in
           </Link>

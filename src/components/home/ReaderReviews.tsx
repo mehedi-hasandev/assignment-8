@@ -28,7 +28,7 @@ const reviews: Review[] = [
     name: "Tanvir Ahmed",
     role: "Avid Reader",
     initials: "TA",
-    avatarColor: "#3d7661",
+    avatarColor: "#201028",
     quote:
       "I found rare classics right in my neighborhood. Borrowing is seamless, and it feels wonderful to discover books without searching all over town.",
   },
@@ -36,7 +36,7 @@ const reviews: Review[] = [
     name: "Nusrat Jahan",
     role: "Book Club Host",
     initials: "NJ",
-    avatarColor: "#98634c",
+    avatarColor: "#201028",
     quote:
       "Sharing finished books has helped our club connect with fellow bookworms nearby. A great way to pass a favorite story on to its next reader.",
   },
@@ -44,7 +44,7 @@ const reviews: Review[] = [
     name: "Sakib Hasan",
     role: "Literature Enthusiast",
     initials: "SH",
-    avatarColor: "#536d91",
+    avatarColor: "#201028",
     quote:
       "The simple 7-day borrowing cycle makes it easy to keep reading, and there are zero late fees. BookNook makes lending feel fair and friendly.",
   },
@@ -54,17 +54,17 @@ export function ReaderReviews() {
   return (
     <section
       aria-labelledby="reader-reviews-title"
-      className="px-4 py-16 sm:px-6 sm:py-20"
+      className="bg-gradient-to-b from-[#262626] via-[#50284b] to-[#7b2973] px-4 py-16 sm:px-6 sm:py-20"
     >
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center sm:mb-12">
           <h2
             id="reader-reviews-title"
-            className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
+            className="font-serif text-3xl font-semibold tracking-tight text-white sm:text-4xl"
           >
             What Readers Are Saying
           </h2>
-          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+          <p className="mt-3 text-sm text-white/80 sm:text-base">
             Real stories from book lovers in your neighborhood.
           </p>
         </div>
@@ -73,16 +73,16 @@ export function ReaderReviews() {
           {reviews.map((review) => (
             <Card
               key={review.name}
-              className="h-full border border-border bg-card/60 text-card-foreground backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:bg-card/80"
+              className="h-full border border-white/40 bg-white text-card-foreground transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40"
             >
               <CardHeader className="flex-row items-center gap-3">
-                <Avatar className="size-11 ring-2 ring-emerald-500/20">
+                <Avatar className="size-11 ring-2 ring-white/50">
                   <AvatarImage
                     src={createAvatarImage(review.initials, review.avatarColor)}
                     alt={`${review.name} avatar`}
                     className=""
                   />
-                  <AvatarFallback className="text-xs font-semibold">
+                  <AvatarFallback className="bg-[#201028] text-xs font-semibold text-white">
                     {review.initials}
                   </AvatarFallback>
                 </Avatar>

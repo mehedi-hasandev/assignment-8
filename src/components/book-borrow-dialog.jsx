@@ -65,6 +65,11 @@ export default function BookBorrowDialog({
         );
         const result = await response.json();
 
+        if (response.status === 401 || response.status === 403) {
+          router.push(getLoginUrl(pathname));
+          return;
+        }
+
         if (!response.ok) {
           throw new Error(
             result.message || "Could not check your borrow status.",
@@ -112,7 +117,7 @@ export default function BookBorrowDialog({
       window.removeEventListener("popstate", checkBorrowStatus);
       document.removeEventListener("visibilitychange", checkWhenVisible);
     };
-  }, [bookId, isSessionPending, session?.user?.email]);
+  }, [bookId, isSessionPending, pathname, router, session?.user?.email]);
 
   const isOutOfStock = !Number.isFinite(copiesLeft) || copiesLeft <= 0;
 
@@ -136,6 +141,11 @@ export default function BookBorrowDialog({
         { cache: "no-store" },
       );
       const statusResult = await statusResponse.json();
+
+      if (statusResponse.status === 401 || statusResponse.status === 403) {
+        router.push(getLoginUrl(pathname));
+        return;
+      }
 
       if (!statusResponse.ok) {
         throw new Error(
@@ -229,7 +239,7 @@ export default function BookBorrowDialog({
         result = { message: responseText };
       }
 
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
         router.push(getLoginUrl(pathname));
         return;
       }
@@ -272,20 +282,20 @@ export default function BookBorrowDialog({
     <>
       <section
         aria-label="Book owner and availability"
-        className="mt-6 grid gap-5 rounded-xl border border-white/5 bg-[#142019] p-4 sm:grid-cols-2 sm:p-5"
+        className="mt-6 grid gap-5 rounded-xl border border-[#781868]/10 bg-orange-50 p-4 sm:grid-cols-2 sm:p-5"
       >
         <div className="min-w-0">
-          <p className="text-xs text-white/50">Added by</p>
-          <p className="mt-1 truncate text-sm font-medium text-white/90">
+          <p className="text-xs text-slate-500">Added by</p>
+          <p className="mt-1 truncate text-sm font-medium text-slate-800">
             {ownerName}
           </p>
           {ownerEmail && (
-            <p className="mt-1 truncate text-xs text-white/50">{ownerEmail}</p>
+            <p className="mt-1 truncate text-xs text-slate-500">{ownerEmail}</p>
           )}
         </div>
         <div>
-          <p className="text-xs text-white/50">Copies left</p>
-          <p className="mt-1 text-sm font-medium text-white/90">
+          <p className="text-xs text-slate-500">Copies left</p>
+          <p className="mt-1 text-sm font-medium text-slate-800">
             {Number.isFinite(copiesLeft) ? copiesLeft : "Not provided"}
           </p>
         </div>
@@ -303,7 +313,7 @@ export default function BookBorrowDialog({
               alreadyBorrowed ||
               isOutOfStock
             }
-            className="bg-emerald-300 px-4 text-zinc-950 hover:bg-emerald-400"
+            className="bg-emerald-300 px-4 text-[#201028] hover:bg-emerald-400"
           >
             {isCheckingBorrowStatus
               ? "Checking availability..."
@@ -315,12 +325,12 @@ export default function BookBorrowDialog({
                     ? "Checking..."
                     : "Borrow This Book"}
           </Button>
-          <DialogContent className="rounded-2xl border border-white/10 bg-[#111d17] p-5 text-white sm:max-w-md">
+          <DialogContent className="rounded-2xl border border-[#781868]/20 bg-white p-5 text-slate-900 sm:max-w-md">
             <DialogHeader className="pr-8">
               <DialogTitle className="font-serif text-lg font-semibold">
                 Borrow &quot;{bookTitle}&quot;
               </DialogTitle>
-              <DialogDescription className="text-white/55">
+              <DialogDescription className="text-slate-600">
                 You can keep this book for 7 days.
               </DialogDescription>
             </DialogHeader>
@@ -337,7 +347,7 @@ export default function BookBorrowDialog({
                   readOnly
                   required
                   disabled={isSubmitting}
-                  className="h-10 cursor-default border-white/10 bg-[#18251e] text-white read-only:focus-visible:ring-0"
+                  className="h-10 cursor-default border-[#781868]/20 bg-orange-50 text-slate-900 read-only:focus-visible:ring-0"
                 />
               </div>
 
@@ -353,7 +363,7 @@ export default function BookBorrowDialog({
                   readOnly
                   required
                   disabled={isSubmitting}
-                  className="h-10 cursor-default border-white/10 bg-[#18251e] text-white read-only:focus-visible:ring-0"
+                  className="h-10 cursor-default border-[#781868]/20 bg-orange-50 text-slate-900 read-only:focus-visible:ring-0"
                 />
               </div>
 
@@ -361,7 +371,7 @@ export default function BookBorrowDialog({
                 <Button
                   type="submit"
                   disabled={isSubmitting || isOutOfStock || alreadyBorrowed}
-                  className="h-10 rounded-lg bg-emerald-300 px-4 font-medium text-zinc-950 hover:bg-emerald-400"
+                  className="h-10 rounded-lg bg-emerald-300 px-4 font-medium text-[#201028] hover:bg-emerald-400"
                 >
                   {isSubmitting && (
                     <LoaderCircle
@@ -377,14 +387,14 @@ export default function BookBorrowDialog({
         </Dialog>
 
         {borrowStatusError && (
-          <p role="alert" className="text-sm text-red-300">
+          <p role="alert" className="text-sm text-red-700">
             {borrowStatusError}
           </p>
         )}
 
         <Link
           href="/all-books"
-          className="text-sm text-white/65 transition-colors hover:text-emerald-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-300"
+          className="text-sm text-slate-600 transition-colors hover:text-orange-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-300"
         >
           Back to all books
         </Link>

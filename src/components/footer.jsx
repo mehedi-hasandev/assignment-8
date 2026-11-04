@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { AtSign, BookOpen, Mail } from "lucide-react";
+import Image from "next/image";
+import { AtSign, Mail } from "lucide-react";
 
 const socialLinks = [
   {
@@ -35,7 +36,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[#101812] text-white">
+    <footer className="border-t border-orange-200 bg-white text-slate-900">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.4fr_1fr_1fr] lg:py-14">
         <div>
           <Link
@@ -43,14 +44,15 @@ export default function Footer() {
             className="inline-flex items-center gap-2.5"
             aria-label="BookNook home"
           >
-            <span className="flex size-8 items-center justify-center rounded-md bg-emerald-500 text-[#101812]">
-              <BookOpen aria-hidden="true" size={19} strokeWidth={2.2} />
-            </span>
-            <span className="text-base font-semibold tracking-tight">
-              BookNook
-            </span>
+            <Image
+              src="/site%20logo.png"
+              alt="BookNook"
+              width={174}
+              height={58}
+              className="h-10 w-auto object-contain"
+            />
           </Link>
-          <p className="mt-4 max-w-sm text-sm leading-6 text-white/65">
+          <p className="mt-4 max-w-sm text-sm leading-6 text-slate-600">
             A neighborhood book-sharing community bringing readers and the
             stories they love a little closer together.
           </p>
@@ -60,14 +62,14 @@ export default function Footer() {
           <h2 className="text-sm font-semibold">Contact</h2>
           <a
             href="mailto:hello@booknook.com"
-            className="mt-4 inline-flex items-center gap-2 text-sm text-white/65 transition-colors hover:text-emerald-300"
+            className="mt-4 inline-flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-orange-700"
           >
             <Mail aria-hidden="true" size={16} />
             hello@booknook.com
           </a>
           <a
             href="mailto:hello@booknook.com"
-            className="mt-3 flex items-center gap-2 text-sm text-white/65 transition-colors hover:text-emerald-300"
+            className="mt-3 flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-orange-700"
           >
             <AtSign aria-hidden="true" size={16} />
             Send us a message
@@ -85,7 +87,7 @@ export default function Footer() {
                 rel="noreferrer"
                 aria-label={label}
                 title={label}
-                className="flex size-10 items-center justify-center rounded-full border border-white/10 text-white/70 transition-colors hover:border-emerald-400/50 hover:bg-emerald-400/10 hover:text-emerald-300"
+                className="flex size-10 items-center justify-center rounded-full border border-orange-200 text-slate-600 transition-colors hover:border-orange-400 hover:bg-orange-50 hover:text-orange-700"
               >
                 <span className="size-[18px]">{icon}</span>
               </a>
@@ -94,8 +96,8 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <p className="mx-auto max-w-7xl px-4 py-5 text-center text-xs text-white/50 sm:px-6">
+      <div className="border-t border-orange-200">
+        <p className="mx-auto max-w-7xl px-4 py-5 text-center text-xs text-slate-500 sm:px-6">
           © 2026 BookNook. All rights reserved.
         </p>
       </div>
