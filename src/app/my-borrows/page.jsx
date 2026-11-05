@@ -1,8 +1,11 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import BorrowList from "@/app/my-borrows/borrow-list";
-import { requireUser } from "@/lib/require-user";
-import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { auth } from "@/lib/auth";
+import { getLoginUrl } from "@/lib/auth-redirect";
+import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 
 const BORROWS_API_URL =
   process.env.BORROWS_API_URL || "http://localhost:8000/borrows";
@@ -75,15 +78,18 @@ async function getMyBorrows(user, token) {
 }
 
 export default async function MyBorrowsPage() {
-  const user = await requireUser("/my-borrows");
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+  if (!session) {
+    redirect(getLoginUrl("/my-borrows"));
+  }
+
+  const user = session.user;
   let borrows = [];
   let errorMessage = "";
 
   try {
-    const token = await getTokenFromServer();
-    if (!token) {
-      throw new Error("Please sign in again to load your borrowed books.");
-    }
+    const token = createBackendAccessToken(user);
     borrows = await getMyBorrows(user, token);
   } catch (error) {
     errorMessage =

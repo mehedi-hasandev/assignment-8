@@ -21,7 +21,8 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 ## Authentication
 
 Email/password authentication uses Better Auth and MongoDB. Configure
-`MONGODB_URI`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` in the environment.
+`MONGODB_URI`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `JWT_SECRET` in the
+environment. `JWT_SECRET` must match the Express API's JWT verification secret.
 Google sign-in is enabled when both `GOOGLE_CLIENT_ID` and
 `GOOGLE_CLIENT_SECRET` are configured.
 

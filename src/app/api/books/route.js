@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -21,13 +21,7 @@ export async function POST(request) {
     );
   }
 
-  const token = await getTokenFromServer();
-  if (!token) {
-    return NextResponse.json(
-      { message: "Please log in to add a book." },
-      { status: 401 },
-    );
-  }
+  const token = createBackendAccessToken(session.user);
 
   let book;
   try {

@@ -60,9 +60,13 @@ export default function BookBorrowDialog({
       setIsCheckingBorrowStatus(true);
 
       try {
+        const token = await getTokenFromClient();
         const response = await fetch(
           `/api/borrows?bookId=${encodeURIComponent(bookId)}`,
-          { cache: "no-store" },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+          },
         );
         const result = await response.json();
 
@@ -139,9 +143,13 @@ export default function BookBorrowDialog({
         return;
       }
 
+      const token = await getTokenFromClient();
       const statusResponse = await fetch(
         `/api/borrows?bookId=${encodeURIComponent(bookId)}`,
-        { cache: "no-store" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        },
       );
       const statusResult = await statusResponse.json();
 

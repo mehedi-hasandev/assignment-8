@@ -1,8 +1,10 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth";
 import BookCover from "@/components/book-cover";
 import BookBorrowDialog from "@/components/book-borrow-dialog";
-import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -45,7 +47,9 @@ export default async function BookDetailsPage({ params }) {
   let error = "";
 
   try {
-    const token = await getTokenFromServer();
+    const reqHeaders = await headers();
+    const session = await auth.api.getSession({ headers: reqHeaders });
+    const token = session ? createBackendAccessToken(session.user) : null;
     book = await getBook(id, token);
   } catch (problem) {
     error =

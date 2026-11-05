@@ -1,10 +1,13 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { BookOpen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { requireUser } from "@/lib/require-user";
+import { auth } from "@/lib/auth";
+import { getLoginUrl } from "@/lib/auth-redirect";
+import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 import MyBooksTable from "@/app/my-books/my-books-table";
 import { sortBooksNewestFirst } from "@/lib/sort-books";
-import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 export const dynamic = "force-dynamic";
 
@@ -63,15 +66,18 @@ async function getMyBooks(user, token) {
 }
 
 export default async function MyBooksPage() {
-  const user = await requireUser("/my-books");
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+  if (!session) {
+    redirect(getLoginUrl("/my-books"));
+  }
+
+  const user = session.user;
   let books = [];
   let errorMessage = "";
 
   try {
-    const token = await getTokenFromServer();
-    if (!token) {
-      throw new Error("Please sign in again to load your books.");
-    }
+    const token = createBackendAccessToken(user);
     books = await getMyBooks(user, token);
   } catch (error) {
     errorMessage =

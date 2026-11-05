@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -65,10 +65,7 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ message: "Please log in to edit books." }, { status: 401 });
   }
 
-  const token = await getTokenFromServer();
-  if (!token) {
-    return NextResponse.json({ message: "Please log in to edit books." }, { status: 401 });
-  }
+  const token = createBackendAccessToken(user);
 
   const { id } = await params;
   if (!OBJECT_ID_PATTERN.test(id)) {
@@ -136,10 +133,7 @@ export async function DELETE(_request, { params }) {
     return NextResponse.json({ message: "Please log in to delete books." }, { status: 401 });
   }
 
-  const token = await getTokenFromServer();
-  if (!token) {
-    return NextResponse.json({ message: "Please log in to delete books." }, { status: 401 });
-  }
+  const token = createBackendAccessToken(user);
 
   const { id } = await params;
   if (!OBJECT_ID_PATTERN.test(id)) {

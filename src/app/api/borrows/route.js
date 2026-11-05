@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 
 const BORROWS_API_URL =
   process.env.BORROWS_API_URL || "http://localhost:8000/borrows";
@@ -54,15 +55,7 @@ export async function GET(request) {
     );
   }
 
-  const authorization =
-    (await auth.api.getToken({ headers: reqHeaders }).then((t) => (t?.token ? `Bearer ${t.token}` : null)));
-
-  if (!authorization) {
-    return NextResponse.json(
-      { message: "Please log in to check your borrowed books." },
-      { status: 401 },
-    );
-  }
+  const authorization = `Bearer ${createBackendAccessToken(session.user)}`;
 
   const authHeaders = {
     "Content-Type": "application/json",
@@ -198,15 +191,7 @@ export async function POST(request) {
     );
   }
   try {
-    const authorization =
-      (await auth.api.getToken({ headers: reqHeaders }).then((t) => (t?.token ? `Bearer ${t.token}` : null)));
-
-    if (!authorization) {
-      return NextResponse.json(
-        { message: "Please log in to borrow a book." },
-        { status: 401 },
-      );
-    }
+    const authorization = `Bearer ${createBackendAccessToken(session.user)}`;
 
     const response = await fetch(BORROWS_API_URL, {
       method: "POST",
@@ -267,15 +252,7 @@ export async function DELETE(request) {
     );
   }
 
-  const authorization =
-    (await auth.api.getToken({ headers: reqHeaders }).then((t) => (t?.token ? `Bearer ${t.token}` : null)));
-
-  if (!authorization) {
-    return NextResponse.json(
-      { message: "Please log in to return a book." },
-      { status: 401 },
-    );
-  }
+  const authorization = `Bearer ${createBackendAccessToken(session.user)}`;
 
   const authHeaders = {
     "Content-Type": "application/json",
