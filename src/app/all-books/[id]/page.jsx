@@ -5,9 +5,9 @@ import { auth } from "@/lib/auth";
 import BookCover from "@/components/book-cover";
 import BookBorrowDialog from "@/components/book-borrow-dialog";
 import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
-const BOOKS_API_URL =
-  process.env.BOOKS_API_URL || "http://localhost:8000/books";
+const BOOKS_API_URL = `${API_BASE_URL}/books`;
 
 async function getBook(id, token) {
   let response;

@@ -2,11 +2,10 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
-const BORROWS_API_URL =
-  process.env.BORROWS_API_URL || "http://localhost:8000/borrows";
-const BOOKS_API_URL =
-  process.env.BOOKS_API_URL || "http://localhost:8000/books";
+const BORROWS_API_URL = `${API_BASE_URL}/borrows`;
+const BOOKS_API_URL = `${API_BASE_URL}/books`;
 
 function getBorrowList(payload) {
   if (Array.isArray(payload)) {

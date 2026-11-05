@@ -202,7 +202,7 @@ export default function AddBookForm() {
 
         if (response.status === 404) {
           throw new Error(
-            "The book endpoint was not found. Check the backend route at http://localhost:8000/add-books.",
+            "The book endpoint was not found. Check the backend /add-books route.",
           );
         }
 

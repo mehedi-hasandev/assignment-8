@@ -6,9 +6,9 @@ import BorrowList from "@/app/my-borrows/borrow-list";
 import { auth } from "@/lib/auth";
 import { getLoginUrl } from "@/lib/auth-redirect";
 import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
-const BORROWS_API_URL =
-  process.env.BORROWS_API_URL || "http://localhost:8000/borrows";
+const BORROWS_API_URL = `${API_BASE_URL}/borrows`;
 
 export const dynamic = "force-dynamic";
 

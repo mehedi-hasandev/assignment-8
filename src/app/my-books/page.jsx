@@ -8,11 +8,11 @@ import { getLoginUrl } from "@/lib/auth-redirect";
 import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
 import MyBooksTable from "@/app/my-books/my-books-table";
 import { sortBooksNewestFirst } from "@/lib/sort-books";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
 export const dynamic = "force-dynamic";
 
-const BOOKS_API_URL =
-  process.env.BOOKS_API_URL || "http://localhost:8000/books";
+const BOOKS_API_URL = `${API_BASE_URL}/books`;
 
 function getBookList(payload) {
   if (Array.isArray(payload)) return payload;

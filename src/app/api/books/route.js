@@ -2,12 +2,10 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
-const BOOKS_API_URL =
-  process.env.BOOKS_API_URL || "http://localhost:8000/books";
-const ADD_BOOKS_API_URL =
-  process.env.ADD_BOOKS_API_URL ||
-  new URL("/add-books", BOOKS_API_URL).toString();
+const BOOKS_API_URL = `${API_BASE_URL}/books`;
+const ADD_BOOKS_API_URL = `${API_BASE_URL}/add-books`;
 
 export async function POST(request) {
   const session = await auth.api.getSession({

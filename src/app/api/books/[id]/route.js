@@ -2,9 +2,9 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createBackendAccessToken } from "@/lib/createBackendAccessToken";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
-const BOOKS_API_URL =
-  process.env.BOOKS_API_URL || "http://localhost:8000/books";
+const BOOKS_API_URL = `${API_BASE_URL}/books`;
 const OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i;
 
 function getBookList(payload) {

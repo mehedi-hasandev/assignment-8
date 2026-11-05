@@ -3,8 +3,9 @@ import Link from "next/link";
 import BookCover from "@/components/book-cover";
 import BookDetailsButton from "@/components/book-details-button";
 import { sortBooksNewestFirst } from "@/lib/sort-books";
+import { API_BASE_URL } from "@/lib/api-base-url";
 
-const NEW_ARRIVALS_API_URL = "http://localhost:8000/books?limit=6";
+const NEW_ARRIVALS_API_URL = `${API_BASE_URL}/books?limit=6`;
 
 function NewArrivalsSkeleton() {
   return (

@@ -25,7 +25,7 @@ There are no tests, no CI, and no pre-commit hooks — `npm test` does not exist
 
 ## External API (separate service, not in this repo)
 
-- Base URL `http://localhost:8000`, hardcoded in the two pages that use it — no env vars and no `.env` files.
+- Backend base URL is configured with `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:8000`).
 - `GET /books` is fetched **during `next build`** by `src/app/books/page.jsx` (static prerender, no error handling), so the backend must be up to build.
 - `POST /add-books` is called client-side by `src/app/add-books/page.jsx`.
 - Field names differ between read and write: GET returns `bookTitle`/`authorName`/`bookImage`/`shortDescription`, while the POST sends `title`/`author`/`imageUrl`/`description`. Verify against the backend before changing either side.
