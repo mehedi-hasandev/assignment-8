@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -13,10 +14,16 @@ function getBookList(payload) {
   return null;
 }
 
-async function getOwnedBook(id, email) {
+async function getOwnedBook(id, email, token) {
   const url = new URL(BOOKS_API_URL);
   url.searchParams.set("email", email);
-  const response = await fetch(url, { cache: "no-store" });
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     const error = new Error("Could not verify book ownership.");
@@ -37,6 +44,16 @@ async function getOwnedBook(id, email) {
   );
 }
 
+function forwardResponse(response) {
+  return new Response(response.body, {
+    status: response.status,
+    headers: {
+      "Content-Type":
+        response.headers.get("content-type") ?? "application/json",
+    },
+  });
+}
+
 async function getRequestUser() {
   const session = await auth.api.getSession({ headers: await headers() });
   return session?.user ?? null;
@@ -45,6 +62,11 @@ async function getRequestUser() {
 export async function PATCH(request, { params }) {
   const user = await getRequestUser();
   if (!user) {
+    return NextResponse.json({ message: "Please log in to edit books." }, { status: 401 });
+  }
+
+  const token = await getTokenFromServer();
+  if (!token) {
     return NextResponse.json({ message: "Please log in to edit books." }, { status: 401 });
   }
 
@@ -79,7 +101,7 @@ export async function PATCH(request, { params }) {
   }
 
   try {
-    const book = await getOwnedBook(id, user.email);
+    const book = await getOwnedBook(id, user.email, token);
     if (!book) {
       return NextResponse.json({ message: "Book not found." }, { status: 404 });
     }
@@ -93,11 +115,13 @@ export async function PATCH(request, { params }) {
     };
     const response = await fetch(`${BOOKS_API_URL}/${encodeURIComponent(id)}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(backendUpdates),
     });
-    const result = await response.json();
-    return NextResponse.json(result, { status: response.status });
+    return forwardResponse(response);
   } catch (error) {
     return NextResponse.json(
       { message: error instanceof Error ? error.message : "Could not update this book." },
@@ -112,22 +136,30 @@ export async function DELETE(_request, { params }) {
     return NextResponse.json({ message: "Please log in to delete books." }, { status: 401 });
   }
 
+  const token = await getTokenFromServer();
+  if (!token) {
+    return NextResponse.json({ message: "Please log in to delete books." }, { status: 401 });
+  }
+
   const { id } = await params;
   if (!OBJECT_ID_PATTERN.test(id)) {
     return NextResponse.json({ message: "The book ID is invalid." }, { status: 400 });
   }
 
   try {
-    const book = await getOwnedBook(id, user.email);
+    const book = await getOwnedBook(id, user.email, token);
     if (!book) {
       return NextResponse.json({ message: "Book not found." }, { status: 404 });
     }
 
     const response = await fetch(`${BOOKS_API_URL}/${encodeURIComponent(id)}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
-    const result = await response.json();
-    return NextResponse.json(result, { status: response.status });
+    return forwardResponse(response);
   } catch (error) {
     return NextResponse.json(
       { message: error instanceof Error ? error.message : "Could not delete this book." },

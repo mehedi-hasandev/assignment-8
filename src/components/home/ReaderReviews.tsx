@@ -54,7 +54,7 @@ export function ReaderReviews() {
   return (
     <section
       aria-labelledby="reader-reviews-title"
-      className="bg-gradient-to-b from-[#262626] via-[#50284b] to-[#7b2973] px-4 py-16 sm:px-6 sm:py-20"
+      className="bg-brand-ink px-4 py-16 sm:px-6 sm:py-20"
     >
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center sm:mb-12">
@@ -73,7 +73,7 @@ export function ReaderReviews() {
           {reviews.map((review) => (
             <Card
               key={review.name}
-              className="h-full border border-white/40 bg-white text-card-foreground transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40"
+              className="h-full border border-brand-plum/20 bg-card text-card-foreground transition-all duration-300 hover:-translate-y-1 hover:border-brand-plum/40"
             >
               <CardHeader className="flex-row items-center gap-3">
                 <Avatar className="size-11 ring-2 ring-white/50">
@@ -82,7 +82,7 @@ export function ReaderReviews() {
                     alt={`${review.name} avatar`}
                     className=""
                   />
-                  <AvatarFallback className="bg-[#201028] text-xs font-semibold text-white">
+                  <AvatarFallback className="bg-brand-ink text-xs font-semibold text-white">
                     {review.initials}
                   </AvatarFallback>
                 </Avatar>

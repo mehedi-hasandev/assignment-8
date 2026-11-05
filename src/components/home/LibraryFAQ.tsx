@@ -34,16 +34,16 @@ export function LibraryFAQ() {
   return (
     <section
       aria-labelledby="library-faq-title"
-      className="bg-[#fcf8fc] px-4 py-16 sm:px-6 sm:py-20"
+      className="bg-brand-paper px-4 py-16 sm:px-6 sm:py-20"
     >
       <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <div className="max-w-md">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-[#702068]">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-brand-plum">
             F. A. Q
           </p>
           <h2
             id="library-faq-title"
-            className="font-serif text-3xl font-semibold leading-tight tracking-tight text-[#201028] sm:text-4xl"
+            className="font-serif text-3xl font-semibold leading-tight tracking-tight text-brand-ink sm:text-4xl"
           >
             Frequently Asked Questions
           </h2>
@@ -52,7 +52,7 @@ export function LibraryFAQ() {
           </p>
           <div
             aria-hidden="true"
-            className="mt-6 h-1 w-20 -skew-x-45 bg-[#781868]"
+            className="mt-6 h-1 w-20 -skew-x-45 bg-brand-plum"
           />
         </div>
 
@@ -64,9 +64,9 @@ export function LibraryFAQ() {
             <AccordionItem
               key={question}
               value={`question-${index + 1}`}
-              className="border-[#781868]/10"
+              className="border-brand-plum/10"
             >
-              <AccordionTrigger className="items-center gap-4 py-3 text-sm font-medium text-[#201028] hover:no-underline sm:gap-5 sm:py-4 sm:text-base [&_[data-slot=accordion-trigger-icon]]:size-8 [&_[data-slot=accordion-trigger-icon]]:rounded-sm [&_[data-slot=accordion-trigger-icon]]:bg-[#201028] [&_[data-slot=accordion-trigger-icon]]:p-1.5 [&_[data-slot=accordion-trigger-icon]]:text-white">
+              <AccordionTrigger className="items-center gap-4 py-3 text-sm font-medium text-brand-ink hover:no-underline sm:gap-5 sm:py-4 sm:text-base [&_[data-slot=accordion-trigger-icon]]:size-8 [&_[data-slot=accordion-trigger-icon]]:rounded-sm [&_[data-slot=accordion-trigger-icon]]:bg-brand-ink [&_[data-slot=accordion-trigger-icon]]:p-1.5 [&_[data-slot=accordion-trigger-icon]]:text-white">
                 {question}
               </AccordionTrigger>
               <AccordionContent className="pb-4 pl-12 text-sm leading-6 text-muted-foreground sm:pl-13">

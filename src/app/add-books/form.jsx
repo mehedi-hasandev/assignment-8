@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
-import { getLoginUrl } from "@/lib/auth-redirect";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const categories = [
   "Fiction",
@@ -90,7 +90,7 @@ async function compressCoverImage(file) {
 
 export default function AddBookForm() {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
   const [category, setCategory] = useState("");
   const [imageSource, setImageSource] = useState("url");
   const [uploadedImage, setUploadedImage] = useState("");
@@ -127,6 +127,15 @@ export default function AddBookForm() {
     event.preventDefault();
     const form = event.currentTarget;
     setMessage(null);
+
+    if (isSessionPending) {
+      toast.error("Checking your session. Please try again in a moment.");
+      return;
+    }
+    if (!session?.user) {
+      toast.error("Please sign in before adding a book.");
+      return;
+    }
 
     if (!category) {
       setMessage({ type: "error", text: "Please choose a book category." });
@@ -165,14 +174,21 @@ export default function AddBookForm() {
     setIsSubmitting(true);
 
     try {
+      const token = await getTokenFromClient();
       const response = await fetch("/api/books", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(book),
       });
 
       if (response.status === 401 || response.status === 403) {
-        router.push(getLoginUrl("/add-books"));
+        const authMessage =
+          "Your session has expired. Please sign in again before adding a book.";
+        setMessage({ type: "error", text: authMessage });
+        toast.error(authMessage);
         return;
       }
 
@@ -222,7 +238,7 @@ export default function AddBookForm() {
   }
 
   const fieldClassName =
-    "h-11 border-[#781868]/20 bg-orange-50 text-foreground placeholder:text-slate-400";
+    "h-11 border-brand-plum/20 bg-brand-paper text-foreground placeholder:text-muted-foreground";
 
   return (
     <main className="flex-1 bg-background px-4 py-12 text-foreground sm:px-6 sm:py-16">
@@ -238,7 +254,7 @@ export default function AddBookForm() {
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl border border-[#781868]/20 bg-white p-5 shadow-xl shadow-black/10 sm:p-8"
+          className="rounded-2xl border border-brand-plum/20 bg-card p-5 shadow-xl shadow-black/10 sm:p-8"
         >
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="space-y-2">
@@ -281,7 +297,7 @@ export default function AddBookForm() {
               >
                 <SelectTrigger
                   id="category"
-                  className="h-11 w-full border-[#781868]/20 bg-orange-50 text-foreground"
+                  className="h-11 w-full border-brand-plum/20 bg-brand-paper text-foreground"
                   aria-label="Category"
                   aria-required="true"
                 >
@@ -330,7 +346,7 @@ export default function AddBookForm() {
               >
                 <SelectTrigger
                   id="imageSource"
-                  className="h-11 w-full border-[#781868]/20 bg-orange-50 text-foreground"
+                  className="h-11 w-full border-brand-plum/20 bg-brand-paper text-foreground"
                   aria-label="Book cover source"
                 >
                   <SelectValue />
@@ -356,7 +372,7 @@ export default function AddBookForm() {
                     name="coverFile"
                     type="file"
                     accept="image/*"
-                    className={`${fieldClassName} h-auto min-h-11 cursor-pointer py-2 file:mr-3 file:rounded-md file:border-0 file:bg-[#41283d] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white`}
+                    className={`${fieldClassName} h-auto min-h-11 cursor-pointer py-2 file:mr-3 file:rounded-md file:border-0 file:bg-brand-cta file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white`}
                     onChange={handleImageChange}
                     aria-label="Choose a book cover image"
                   />
@@ -366,7 +382,7 @@ export default function AddBookForm() {
                     </p>
                   )}
                   {uploadedImage && (
-                    <div className="relative h-40 w-28 overflow-hidden rounded-md border border-[#781868]/20">
+                    <div className="relative h-40 w-28 overflow-hidden rounded-md border border-brand-plum/20">
                       <Image
                         src={uploadedImage}
                         alt="Selected book cover preview"
@@ -388,7 +404,7 @@ export default function AddBookForm() {
               <Textarea
                 id="description"
                 name="description"
-                className="min-h-28 resize-y border-[#781868]/20 bg-orange-50 text-foreground placeholder:text-slate-400"
+                className="min-h-28 resize-y border-brand-plum/20 bg-brand-paper text-foreground placeholder:text-muted-foreground"
                 placeholder="What should other readers know about this book?"
                 maxLength={500}
                 required
@@ -404,7 +420,7 @@ export default function AddBookForm() {
                 name="userName"
                 type="text"
                 value={session?.user?.name ?? ""}
-                className="h-11 border-[#781868]/20 bg-orange-50 text-muted-foreground"
+                className="h-11 border-brand-plum/20 bg-brand-paper text-muted-foreground"
                 placeholder="Your account name"
                 readOnly
               />
@@ -419,7 +435,7 @@ export default function AddBookForm() {
                 name="userEmail"
                 type="email"
                 value={session?.user?.email ?? ""}
-                className="h-11 border-[#781868]/20 bg-orange-50 text-muted-foreground"
+                className="h-11 border-brand-plum/20 bg-brand-paper text-muted-foreground"
                 placeholder="Your account email"
                 readOnly
               />
@@ -430,7 +446,7 @@ export default function AddBookForm() {
             <p
               role={message.type === "error" ? "alert" : "status"}
               className={`mt-5 rounded-lg border px-4 py-3 text-sm ${
-                "border-red-500/30 bg-red-500/10 text-red-700"
+                "border-brand-plum/20 bg-brand-paper text-brand-plum"
               }`}
             >
               {message.text}
@@ -439,10 +455,12 @@ export default function AddBookForm() {
 
           <Button
             type="submit"
-            disabled={isSubmitting || isPreparingImage}
-            className="mt-6 h-11 w-full bg-emerald-500 font-semibold text-white hover:bg-emerald-600"
+            disabled={isSessionPending || isSubmitting || isPreparingImage}
+            className="mt-6 h-11 w-full bg-brand-cta font-semibold text-white hover:bg-brand-cta-hover"
           >
-            {isSubmitting ? (
+            {isSessionPending ? (
+              "Checking session..."
+            ) : isSubmitting ? (
               <>
                 <LoaderCircle aria-hidden="true" className="animate-spin" />
                 Adding book...

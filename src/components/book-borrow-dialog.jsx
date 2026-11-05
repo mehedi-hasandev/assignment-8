@@ -7,6 +7,7 @@ import { LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { getLoginUrl } from "@/lib/auth-redirect";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -66,7 +67,9 @@ export default function BookBorrowDialog({
         const result = await response.json();
 
         if (response.status === 401 || response.status === 403) {
-          router.push(getLoginUrl(pathname));
+          const message = "Your session has expired. Please sign in again.";
+          setBorrowStatusError(message);
+          toast.error(message);
           return;
         }
 
@@ -143,7 +146,7 @@ export default function BookBorrowDialog({
       const statusResult = await statusResponse.json();
 
       if (statusResponse.status === 401 || statusResponse.status === 403) {
-        router.push(getLoginUrl(pathname));
+        toast.error("Your session has expired. Please sign in again.");
         return;
       }
 
@@ -214,9 +217,13 @@ export default function BookBorrowDialog({
     setIsSubmitting(true);
 
     try {
+      const token = await getTokenFromClient();
       const response = await fetch("/api/borrows", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           bookId,
           bookTitle,
@@ -240,7 +247,7 @@ export default function BookBorrowDialog({
       }
 
       if (response.status === 401 || response.status === 403) {
-        router.push(getLoginUrl(pathname));
+        toast.error("Your session has expired. Please sign in again.");
         return;
       }
 
@@ -282,7 +289,7 @@ export default function BookBorrowDialog({
     <>
       <section
         aria-label="Book owner and availability"
-        className="mt-6 grid gap-5 rounded-xl border border-[#781868]/10 bg-orange-50 p-4 sm:grid-cols-2 sm:p-5"
+        className="mt-6 grid w-full gap-5 rounded-xl border border-brand-plum/20 bg-brand-paper p-4 sm:grid-cols-2 sm:p-5"
       >
         <div className="min-w-0">
           <p className="text-xs text-slate-500">Added by</p>
@@ -313,9 +320,11 @@ export default function BookBorrowDialog({
               alreadyBorrowed ||
               isOutOfStock
             }
-            className="bg-emerald-300 px-4 text-[#201028] hover:bg-emerald-400"
+            className="bg-brand-cta px-4 text-white hover:bg-brand-cta-hover"
           >
-            {isCheckingBorrowStatus
+            {isSessionPending
+              ? "Checking session..."
+              : isCheckingBorrowStatus
               ? "Checking availability..."
               : alreadyBorrowed
                 ? "Already Borrowed"
@@ -325,12 +334,12 @@ export default function BookBorrowDialog({
                     ? "Checking..."
                     : "Borrow This Book"}
           </Button>
-          <DialogContent className="rounded-2xl border border-[#781868]/20 bg-white p-5 text-slate-900 sm:max-w-md">
+          <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-brand-plum/20 bg-card p-5 text-foreground sm:max-w-md">
             <DialogHeader className="pr-8">
               <DialogTitle className="font-serif text-lg font-semibold">
                 Borrow &quot;{bookTitle}&quot;
               </DialogTitle>
-              <DialogDescription className="text-slate-600">
+              <DialogDescription className="text-muted-foreground">
                 You can keep this book for 7 days.
               </DialogDescription>
             </DialogHeader>
@@ -347,7 +356,7 @@ export default function BookBorrowDialog({
                   readOnly
                   required
                   disabled={isSubmitting}
-                  className="h-10 cursor-default border-[#781868]/20 bg-orange-50 text-slate-900 read-only:focus-visible:ring-0"
+                  className="h-10 cursor-default border-brand-plum/20 bg-brand-paper text-foreground read-only:focus-visible:ring-0"
                 />
               </div>
 
@@ -363,7 +372,7 @@ export default function BookBorrowDialog({
                   readOnly
                   required
                   disabled={isSubmitting}
-                  className="h-10 cursor-default border-[#781868]/20 bg-orange-50 text-slate-900 read-only:focus-visible:ring-0"
+                  className="h-10 cursor-default border-brand-plum/20 bg-brand-paper text-foreground read-only:focus-visible:ring-0"
                 />
               </div>
 
@@ -371,7 +380,7 @@ export default function BookBorrowDialog({
                 <Button
                   type="submit"
                   disabled={isSubmitting || isOutOfStock || alreadyBorrowed}
-                  className="h-10 rounded-lg bg-emerald-300 px-4 font-medium text-[#201028] hover:bg-emerald-400"
+                  className="h-10 rounded-lg bg-brand-cta px-4 font-medium text-white hover:bg-brand-cta-hover"
                 >
                   {isSubmitting && (
                     <LoaderCircle
@@ -387,14 +396,14 @@ export default function BookBorrowDialog({
         </Dialog>
 
         {borrowStatusError && (
-          <p role="alert" className="text-sm text-red-700">
+          <p role="alert" className="text-sm text-brand-plum">
             {borrowStatusError}
           </p>
         )}
 
         <Link
           href="/all-books"
-          className="text-sm text-slate-600 transition-colors hover:text-orange-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-300"
+          className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-plum"
         >
           Back to all books
         </Link>

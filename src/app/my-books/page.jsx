@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/require-user";
 import MyBooksTable from "@/app/my-books/my-books-table";
 import { sortBooksNewestFirst } from "@/lib/sort-books";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 export const dynamic = "force-dynamic";
 
@@ -17,13 +18,17 @@ function getBookList(payload) {
   throw new Error("The books API returned an unexpected response.");
 }
 
-async function getMyBooks(user) {
+async function getMyBooks(user, token) {
   const url = new URL(BOOKS_API_URL);
   url.searchParams.set("email", user.email);
 
   let response;
   try {
     response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       cache: "no-store",
     });
   } catch {
@@ -63,7 +68,11 @@ export default async function MyBooksPage() {
   let errorMessage = "";
 
   try {
-    books = await getMyBooks(user);
+    const token = await getTokenFromServer();
+    if (!token) {
+      throw new Error("Please sign in again to load your books.");
+    }
+    books = await getMyBooks(user, token);
   } catch (error) {
     errorMessage =
       error instanceof Error
@@ -72,44 +81,44 @@ export default async function MyBooksPage() {
   }
 
   return (
-    <main className="min-h-[70vh] flex-1 bg-white text-slate-900">
-      <header className="border-b border-[#781868]/20 bg-orange-50 px-4 py-8 text-center sm:py-10">
+    <main className="min-h-[70vh] w-full flex-1 bg-background text-foreground">
+      <header className="border-b border-brand-plum/20 bg-brand-paper px-4 py-8 text-center sm:py-10">
         <h1 className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
           My Books
         </h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-muted-foreground">
           Books you added to the library.
         </p>
       </header>
 
       <section
         aria-label="Your books"
-        className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10"
+        className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10"
       >
         {errorMessage ? (
           <div
             role="alert"
-            className="rounded-xl border border-red-400/20 bg-red-50 px-6 py-8 text-center"
+            className="rounded-xl border border-brand-plum/20 bg-brand-paper px-6 py-8 text-center"
           >
-            <h2 className="font-semibold text-red-800">
+            <h2 className="font-semibold text-brand-ink">
               Unable to load your books
             </h2>
-            <p className="mt-2 text-sm text-red-700">{errorMessage}</p>
+            <p className="mt-2 text-sm text-brand-plum">{errorMessage}</p>
           </div>
         ) : books.length === 0 ? (
-          <div className="rounded-xl border border-[#781868]/20 bg-white px-6 py-12 text-center">
+          <div className="rounded-xl border border-brand-plum/20 bg-card px-6 py-12 text-center">
             <BookOpen
               aria-hidden="true"
               size={28}
-              className="mx-auto text-orange-800"
+              className="mx-auto text-brand-plum"
             />
             <h2 className="mt-4 text-lg font-semibold">No books added yet</h2>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-muted-foreground">
               Books you add to the library will appear here.
             </p>
             <Button
               render={<Link href="/add-books" />}
-              className="mt-5 bg-emerald-300 text-[#201028] hover:bg-emerald-400"
+              className="mt-5 bg-brand-cta text-white hover:bg-brand-cta-hover"
             >
               <Plus aria-hidden="true" />
               Add New Book

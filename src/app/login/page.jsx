@@ -9,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import { getSafeReturnTo } from "@/lib/auth-redirect";
 
 const inputClassName =
-  "mt-2 w-full rounded-lg border border-[#781868]/20 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/20";
+  "mt-2 w-full rounded-lg border border-brand-plum/20 bg-brand-paper px-3 py-2.5 text-sm text-brand-ink outline-none transition placeholder:text-muted-foreground focus:border-brand-plum focus:ring-2 focus:ring-brand-plum/20";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -82,10 +82,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-white px-4 py-10 text-slate-900 sm:px-6">
-      <section className="w-full max-w-md rounded-2xl border border-[#781868]/20 bg-white p-6 shadow-2xl shadow-black/20 sm:p-8">
+    <main className="flex flex-1 items-center justify-center bg-background px-4 py-10 text-foreground sm:px-6">
+      <section className="w-full max-w-md rounded-2xl border border-brand-plum/20 bg-card p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="mb-7 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-plum">
             Welcome back
           </p>
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight">
@@ -129,7 +129,7 @@ export default function LoginPage() {
           <div className="flex justify-end">
             <button
               type="button"
-              className="text-sm text-emerald-300 transition-colors hover:text-orange-800"
+              className="text-sm text-brand-plum transition-colors hover:text-brand-ink"
             >
               Forgot password?
             </button>
@@ -138,7 +138,7 @@ export default function LoginPage() {
           {formError && (
             <p
               role="alert"
-              className="rounded-lg border border-red-400/20 bg-red-50 px-3 py-2 text-sm text-red-800"
+              className="rounded-lg border border-brand-plum/20 bg-brand-paper px-3 py-2 text-sm text-brand-ink"
             >
               {formError}
             </p>
@@ -147,7 +147,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-300 px-4 py-3 text-sm font-semibold text-[#201028] transition-colors hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-cta px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-cta-hover disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting && (
               <LoaderCircle aria-hidden="true" size={17} className="animate-spin" />
@@ -166,11 +166,11 @@ export default function LoginPage() {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-orange-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-3 rounded-lg border border-brand-plum/20 bg-brand-paper px-4 py-3 text-sm font-medium text-brand-ink transition-colors hover:bg-brand-tint disabled:cursor-not-allowed disabled:opacity-60"
         >
           <span
             aria-hidden="true"
-            className="flex size-5 items-center justify-center rounded-full bg-white text-sm font-bold text-[#201028]"
+            className="flex size-5 items-center justify-center rounded-full bg-brand-paper text-sm font-bold text-brand-ink"
           >
             G
           </span>
@@ -181,7 +181,7 @@ export default function LoginPage() {
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="font-medium text-emerald-300 transition-colors hover:text-orange-800"
+            className="font-medium text-brand-plum transition-colors hover:text-brand-ink"
           >
             Register
           </Link>

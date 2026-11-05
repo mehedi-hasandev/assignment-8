@@ -2,18 +2,23 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BookCover from "@/components/book-cover";
 import BookBorrowDialog from "@/components/book-borrow-dialog";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
 
-async function getBook(id) {
+async function getBook(id, token) {
   let response;
 
   try {
-    response = await fetch(
-      `${BOOKS_API_URL}/${encodeURIComponent(id)}`,
-      { cache: "no-store" },
-    );
+    response = await fetch(`${BOOKS_API_URL}/${encodeURIComponent(id)}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      cache: "no-store",
+    });
   } catch {
     throw new Error(
       "Could not connect to the book server. Make sure it is running and try again.",
@@ -35,11 +40,13 @@ async function getBook(id) {
 
 export default async function BookDetailsPage({ params }) {
   const { id } = await params;
+
   let book = null;
   let error = "";
 
   try {
-    book = await getBook(id);
+    const token = await getTokenFromServer();
+    book = await getBook(id, token);
   } catch (problem) {
     error =
       problem instanceof Error
@@ -51,18 +58,18 @@ export default async function BookDetailsPage({ params }) {
 
   if (error) {
     return (
-      <main className="flex-1 bg-white px-4 py-16 text-slate-900 sm:px-6">
+      <main className="flex-1 bg-background px-4 py-16 text-foreground sm:px-6">
         <section
           role="alert"
-          className="mx-auto max-w-2xl rounded-xl border border-red-400/20 bg-red-50 p-6 text-center sm:p-8"
+          className="mx-auto max-w-2xl rounded-xl border border-brand-plum/20 bg-brand-paper p-6 text-center sm:p-8"
         >
-          <h1 className="text-xl font-semibold text-red-800">
+          <h1 className="text-xl font-semibold text-brand-ink">
             Book details unavailable
           </h1>
-          <p className="mt-3 text-sm leading-6 text-red-700">{error}</p>
+          <p className="mt-3 text-sm leading-6 text-brand-plum">{error}</p>
           <Link
             href="/all-books"
-            className="mt-6 inline-flex rounded-md bg-emerald-300 px-4 py-2 text-sm font-medium text-[#201028] transition-colors hover:bg-emerald-400"
+            className="mt-6 inline-flex rounded-md bg-brand-cta px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-cta-hover"
           >
             Back to All Books
           </Link>
@@ -86,20 +93,20 @@ export default async function BookDetailsPage({ params }) {
   );
 
   return (
-    <main className="flex-1 bg-white px-4 py-8 text-slate-900 sm:px-6 sm:py-12">
-      <article className="mx-auto grid max-w-6xl items-start gap-8 md:grid-cols-[minmax(260px,0.82fr)_minmax(0,1.18fr)] md:gap-10 lg:gap-12">
-        <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-lg border border-[#781868]/20 shadow-xl shadow-black/20 md:max-w-none">
+    <main className="w-full flex-1 bg-background py-8 text-foreground sm:py-12">
+      <article className="mx-auto grid w-full max-w-6xl grid-cols-1 items-start gap-8 px-4 md:grid-cols-2 md:gap-10">
+        <div className="@container relative mx-auto w-full max-w-[52.5vh] overflow-hidden rounded-xl border border-brand-plum/20 shadow-xl shadow-black/10">
           <BookCover
             imageUrl={imageUrl}
             title={title}
             author={author}
             index={0}
-            aspectClass="aspect-[3/4]"
+            aspectClass="h-[min(70vh,133.333cqi)] w-full"
           />
         </div>
 
         <div className="flex min-w-0 flex-col pt-1 md:pt-0">
-          <p className="w-fit rounded-full border border-[#781868]/20 bg-slate-50 px-3 py-1 text-xs font-medium text-orange-800">
+          <p className="w-fit rounded-full border border-brand-plum/20 bg-brand-paper px-3 py-1 text-xs font-medium text-brand-ink">
             {category}
           </p>
           <h1 className="mt-4 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">

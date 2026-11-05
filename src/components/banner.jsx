@@ -48,7 +48,7 @@ export default function Banner() {
 
           return (
             <SwiperSlide key={slide.title}>
-              <div className="relative flex h-[85vh] items-center overflow-hidden bg-[#201028]">
+              <div className="relative flex h-[85vh] items-center overflow-hidden bg-brand-ink">
                 <Image
                   src={slide.image}
                   alt={slide.alt}
@@ -60,10 +60,10 @@ export default function Banner() {
                 />
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.32)_0%,rgba(0,0,0,0.16)_36%,transparent_68%)]"
+                  className="absolute inset-0 bg-[linear-gradient(90deg,rgba(32,16,40,0.32)_0%,rgba(32,16,40,0.16)_36%,transparent_68%)]"
                 />
                 <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-8 pt-8 text-white sm:px-8 lg:px-12">
-                  <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">
+                  <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/90">
                     BookNook
                   </p>
                   <Heading className="max-w-lg font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-[2.75rem]">
@@ -74,7 +74,7 @@ export default function Banner() {
                   </p>
                   <Link
                     href="/all-books"
-                    className="mt-5 inline-flex min-h-11 items-center rounded-md bg-[#41283d] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#50284b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand-cta px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-cta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     Browse Books
                   </Link>

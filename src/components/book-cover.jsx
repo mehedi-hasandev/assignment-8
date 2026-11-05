@@ -4,11 +4,11 @@ import Image from "next/image";
 import { useState } from "react";
 
 const coverStyles = [
-  "from-orange-100 via-orange-200 to-orange-400",
-  "from-orange-50 via-amber-100 to-orange-300",
-  "from-amber-100 via-orange-200 to-amber-400",
-  "from-orange-100 via-orange-300 to-amber-500",
-  "from-amber-50 via-orange-100 to-orange-300",
+  "from-brand-ink via-brand-cta to-brand-plum",
+  "from-brand-plum via-brand-cta to-brand-ink",
+  "from-brand-cta via-brand-plum to-brand-ink",
+  "from-brand-ink via-brand-plum to-brand-cta",
+  "from-brand-plum via-brand-ink to-brand-cta",
 ];
 
 export default function BookCover({
@@ -25,25 +25,25 @@ export default function BookCover({
       <div
         role="img"
         aria-label={`Cover of ${title}`}
-        className={`flex ${aspectClass} flex-col justify-between bg-gradient-to-br p-4 text-orange-950 ${
+        className={`flex ${aspectClass} flex-col justify-between bg-gradient-to-br p-4 text-white ${
           coverStyles[index % coverStyles.length]
         }`}
       >
-        <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-orange-900/70">
+        <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-white/80">
           BookNook Library
         </span>
         <div>
           <p className="line-clamp-4 font-serif text-xl font-bold leading-tight">
             {title}
           </p>
-          <p className="mt-3 line-clamp-2 text-xs text-orange-950/75">{author}</p>
+          <p className="mt-3 line-clamp-2 text-xs text-white/80">{author}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`relative ${aspectClass} bg-orange-50`}>
+    <div className={`relative ${aspectClass} bg-brand-paper`}>
       <Image
         src={imageUrl}
         alt={`Cover of ${title}`}

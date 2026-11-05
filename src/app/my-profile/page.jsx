@@ -25,14 +25,14 @@ export default async function MyProfilePage() {
   const initial = name.charAt(0).toUpperCase();
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-white px-4 py-12 text-slate-900 sm:px-6">
+    <main className="flex flex-1 items-center justify-center bg-background px-4 py-12 text-foreground sm:px-6">
       <section
         aria-label="My profile"
-        className="w-full max-w-md rounded-2xl border border-[#781868]/20 bg-white p-8 text-center shadow-2xl shadow-black/20 sm:p-10"
+        className="w-full max-w-md rounded-2xl border border-brand-plum/20 bg-card p-8 text-center shadow-2xl shadow-black/20 sm:p-10"
       >
-        <Avatar className="mx-auto size-28 border border-[#781868]/20 ring-4 ring-emerald-300/10">
+        <Avatar className="mx-auto size-28 border border-brand-plum/20 ring-4 ring-brand-plum/10">
           <AvatarImage src={user.image || undefined} alt={name} />
-          <AvatarFallback className="bg-emerald-300/10 font-serif text-3xl font-semibold text-orange-800">
+          <AvatarFallback className="bg-brand-paper font-serif text-3xl font-semibold text-brand-ink">
             {initial || <UserRound aria-hidden="true" size={34} />}
           </AvatarFallback>
         </Avatar>

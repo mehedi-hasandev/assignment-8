@@ -33,7 +33,7 @@ function DropdownMenuContent({
         <Menu.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "min-w-52 origin-(--transform-origin) rounded-lg border border-[#781868]/20 bg-white p-1.5 text-slate-900 shadow-xl shadow-black/30 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "min-w-52 origin-(--transform-origin) rounded-lg border border-brand-plum/20 bg-card p-1.5 text-foreground shadow-xl shadow-black/30 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className,
           )}
           {...props}

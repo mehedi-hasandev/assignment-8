@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BookOpen, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
-import { getLoginUrl } from "@/lib/auth-redirect";
+import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 function formatDate(value) {
   if (!value) return "—";
@@ -39,17 +39,30 @@ function getBorrowId(borrow, index) {
 }
 
 export default function BorrowList({ borrows }) {
-  const router = useRouter();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
   const [activeBorrows, setActiveBorrows] = useState(borrows);
   const [returningId, setReturningId] = useState("");
 
   async function handleReturnBook(borrowId, title) {
+    if (isSessionPending) {
+      toast.error("Checking your session. Please try again in a moment.");
+      return;
+    }
+    if (!session?.user) {
+      toast.error("Please sign in again before returning books.");
+      return;
+    }
+
     setReturningId(borrowId);
 
     try {
+      const token = await getTokenFromClient();
       const response = await fetch("/api/borrows", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ borrowId }),
       });
 
@@ -57,7 +70,9 @@ export default function BorrowList({ borrows }) {
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          router.push(getLoginUrl("/my-borrows"));
+          toast.error(
+            result.message || "Your session has expired. Please sign in again.",
+          );
           return;
         }
         throw new Error(result.message || "Could not return this book.");
@@ -82,11 +97,11 @@ export default function BorrowList({ borrows }) {
 
   if (activeBorrows.length === 0) {
     return (
-      <div className="rounded-xl border border-[#781868]/20 bg-white px-6 py-12 text-center">
+      <div className="rounded-xl border border-brand-plum/20 bg-card px-6 py-12 text-center">
         <BookOpen
           aria-hidden="true"
           size={28}
-          className="mx-auto text-orange-800"
+          className="mx-auto text-brand-plum"
         />
         <h2 className="mt-4 text-lg font-semibold">
           You haven&apos;t borrowed any books yet
@@ -96,7 +111,7 @@ export default function BorrowList({ borrows }) {
         </p>
         <Link
           href="/all-books"
-          className="mt-5 inline-flex rounded-md bg-emerald-300 px-4 py-2 text-sm font-medium text-[#201028] transition-colors hover:bg-emerald-400"
+          className="mt-5 inline-flex rounded-md bg-brand-cta px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-cta-hover"
         >
           Browse Books
         </Link>
@@ -105,11 +120,11 @@ export default function BorrowList({ borrows }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-[#781868]/20 bg-white">
+    <div className="overflow-hidden rounded-lg border border-brand-plum/20 bg-card">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[680px] border-collapse text-left">
           <thead>
-            <tr className="border-b border-[#781868]/20 bg-orange-50 text-xs text-slate-600">
+            <tr className="border-b border-brand-plum/20 bg-brand-paper text-xs text-brand-ink">
               <th scope="col" className="px-4 py-3 font-medium">
                 Image
               </th>
@@ -127,7 +142,7 @@ export default function BorrowList({ borrows }) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-orange-100">
+          <tbody className="divide-y divide-brand-plum/10">
             {activeBorrows.map((borrow, index) => {
               const title = getBookTitle(borrow);
               const image = getBookImage(borrow);
@@ -139,7 +154,7 @@ export default function BorrowList({ borrows }) {
               return (
                 <tr
                   key={borrowId}
-                  className="text-sm text-slate-700 transition-colors hover:bg-orange-50/60"
+                  className="text-sm text-brand-ink transition-colors hover:bg-brand-paper"
                 >
                   <td className="px-4 py-2">
                     {image ? (
@@ -155,7 +170,7 @@ export default function BorrowList({ borrows }) {
                       <div
                         role="img"
                         aria-label={`No cover available for ${title}`}
-                        className="flex h-[52px] w-10 items-center justify-center rounded-sm bg-orange-50 text-orange-800"
+                        className="flex h-[52px] w-10 items-center justify-center rounded-sm bg-brand-paper text-brand-plum"
                       >
                         <BookOpen aria-hidden="true" size={18} />
                       </div>
@@ -174,13 +189,17 @@ export default function BorrowList({ borrows }) {
                     <button
                       type="button"
                       onClick={() => handleReturnBook(borrowId, title)}
-                      disabled={!hasDatabaseId || Boolean(returningId)}
+                      disabled={
+                        !hasDatabaseId ||
+                        isSessionPending ||
+                        Boolean(returningId)
+                      }
                       title={
                         hasDatabaseId
                           ? "Return this book"
                           : "This borrow record cannot be returned."
                       }
-                      className="inline-flex items-center gap-1.5 rounded-md border border-[#781868]/20 bg-slate-50 px-3 py-1.5 text-xs text-slate-900 transition-colors hover:border-emerald-300/30 hover:bg-emerald-300/10 hover:text-orange-800 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-brand-plum/20 bg-card px-3 py-1.5 text-xs text-brand-ink transition-colors hover:border-brand-plum/40 hover:bg-brand-paper disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {returningId === borrowId && (
                         <LoaderCircle

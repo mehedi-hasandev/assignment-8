@@ -36,7 +36,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-orange-200 bg-white text-slate-900">
+    <footer className="border-t border-brand-plum/20 bg-card text-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.4fr_1fr_1fr] lg:py-14">
         <div>
           <Link
@@ -52,7 +52,7 @@ export default function Footer() {
               className="h-10 w-auto object-contain"
             />
           </Link>
-          <p className="mt-4 max-w-sm text-sm leading-6 text-slate-600">
+          <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">
             A neighborhood book-sharing community bringing readers and the
             stories they love a little closer together.
           </p>
@@ -62,14 +62,14 @@ export default function Footer() {
           <h2 className="text-sm font-semibold">Contact</h2>
           <a
             href="mailto:hello@booknook.com"
-            className="mt-4 inline-flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-orange-700"
+            className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-brand-plum"
           >
             <Mail aria-hidden="true" size={16} />
             hello@booknook.com
           </a>
           <a
             href="mailto:hello@booknook.com"
-            className="mt-3 flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-orange-700"
+            className="mt-3 flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-brand-plum"
           >
             <AtSign aria-hidden="true" size={16} />
             Send us a message
@@ -87,7 +87,7 @@ export default function Footer() {
                 rel="noreferrer"
                 aria-label={label}
                 title={label}
-                className="flex size-10 items-center justify-center rounded-full border border-orange-200 text-slate-600 transition-colors hover:border-orange-400 hover:bg-orange-50 hover:text-orange-700"
+                className="flex size-10 items-center justify-center rounded-full border border-brand-plum/20 text-muted-foreground transition-colors hover:border-brand-plum hover:bg-brand-paper hover:text-brand-plum"
               >
                 <span className="size-[18px]">{icon}</span>
               </a>
@@ -96,8 +96,8 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-orange-200">
-        <p className="mx-auto max-w-7xl px-4 py-5 text-center text-xs text-slate-500 sm:px-6">
+      <div className="border-t border-brand-plum/20">
+        <p className="mx-auto max-w-7xl px-4 py-5 text-center text-xs text-muted-foreground sm:px-6">
           © 2026 BookNook. All rights reserved.
         </p>
       </div>

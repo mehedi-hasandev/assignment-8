@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const BOOKS_API_URL =
   process.env.BOOKS_API_URL || "http://localhost:8000/books";
@@ -14,6 +15,14 @@ export async function POST(request) {
   });
 
   if (!session) {
+    return NextResponse.json(
+      { message: "Please log in to add a book." },
+      { status: 401 },
+    );
+  }
+
+  const token = await getTokenFromServer();
+  if (!token) {
     return NextResponse.json(
       { message: "Please log in to add a book." },
       { status: 401 },
@@ -42,6 +51,7 @@ export async function POST(request) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         ...book,

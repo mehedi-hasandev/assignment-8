@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, LoaderCircle, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { getLoginUrl } from "@/lib/auth-redirect";
+import { authClient } from "@/lib/auth-client";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 function getBookId(book, index) {
   return String(book._id ?? book.id ?? book.bookId ?? `${book.title}-${index}`);
@@ -30,6 +31,7 @@ export default function MyBooksTable({
   userEmail,
 }) {
   const router = useRouter();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
   const [books, setBooks] = useState(initialBooks);
   const [editingBook, setEditingBook] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,6 +40,14 @@ export default function MyBooksTable({
   async function handleEdit(event) {
     event.preventDefault();
     if (!editingBook) return;
+    if (isSessionPending) {
+      toast.error("Checking your session. Please try again in a moment.");
+      return;
+    }
+    if (!session?.user) {
+      toast.error("Please sign in again before editing books.");
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const updates = {
@@ -61,11 +71,15 @@ export default function MyBooksTable({
 
     setIsSaving(true);
     try {
+      const token = await getTokenFromClient();
       const response = await fetch(
         `/api/books/${encodeURIComponent(getBookId(editingBook, 0))}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(updates),
         },
       );
@@ -73,7 +87,9 @@ export default function MyBooksTable({
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          router.push(getLoginUrl("/my-books"));
+          toast.error(
+            result.message || "Your session has expired. Please sign in again.",
+          );
           return;
         }
         throw new Error(result.message || "Could not update this book.");
@@ -106,20 +122,36 @@ export default function MyBooksTable({
   }
 
   async function handleDelete(book, index) {
+    if (isSessionPending) {
+      toast.error("Checking your session. Please try again in a moment.");
+      return;
+    }
+    if (!session?.user) {
+      toast.error("Please sign in again before deleting books.");
+      return;
+    }
+
     const id = getBookId(book, index);
     const title = getTitle(book);
     if (!window.confirm(`Delete "${title}" from your books?`)) return;
 
     setDeletingId(id);
     try {
+      const token = await getTokenFromClient();
       const response = await fetch(`/api/books/${encodeURIComponent(id)}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const result = await response.json();
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          router.push(getLoginUrl("/my-books"));
+          toast.error(
+            result.message || "Your session has expired. Please sign in again.",
+          );
           return;
         }
         throw new Error(result.message || "Could not delete this book.");
@@ -139,16 +171,16 @@ export default function MyBooksTable({
   }
 
   const fieldClassName =
-    "h-10 w-full min-w-0 rounded-md border border-[#781868]/20 bg-orange-50 px-3 text-sm text-slate-900 outline-none focus-visible:ring-2 focus-visible:ring-emerald-300";
+    "h-10 w-full min-w-0 rounded-md border border-brand-plum/20 bg-brand-paper px-3 text-sm text-brand-ink outline-none focus-visible:ring-2 focus-visible:ring-brand-plum";
 
   return (
     <>
       {books.length === 0 ? (
-        <div className="rounded-xl border border-[#781868]/20 bg-white px-6 py-12 text-center">
+        <div className="rounded-xl border border-brand-plum/20 bg-card px-6 py-12 text-center">
           <BookOpen
             aria-hidden="true"
             size={28}
-            className="mx-auto text-orange-800"
+            className="mx-auto text-brand-plum"
           />
           <h2 className="mt-4 text-lg font-semibold">No books added yet</h2>
           <p className="mt-2 text-sm text-slate-600">
@@ -156,17 +188,17 @@ export default function MyBooksTable({
           </p>
           <Link
             href="/add-books"
-            className="mt-5 inline-flex items-center gap-2 rounded-md bg-emerald-300 px-4 py-2 text-sm font-medium text-[#201028] transition-colors hover:bg-emerald-400"
+            className="mt-5 inline-flex items-center gap-2 rounded-md bg-brand-cta px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-cta-hover"
           >
             Add New Book
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-[#781868]/20 bg-white">
+        <div className="overflow-hidden rounded-xl border border-brand-plum/20 bg-card">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] border-collapse text-left">
               <thead>
-                <tr className="border-b border-[#781868]/20 bg-orange-50 text-xs text-slate-600">
+                <tr className="border-b border-brand-plum/20 bg-brand-paper text-xs text-brand-ink">
                   <th scope="col" className="px-5 py-3 font-medium">
                     Book
                   </th>
@@ -181,7 +213,7 @@ export default function MyBooksTable({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-orange-100">
+              <tbody className="divide-y divide-brand-plum/10">
                 {books.map((book, index) => {
                   const title = getTitle(book);
                   const image = String(
@@ -196,7 +228,7 @@ export default function MyBooksTable({
                   return (
                     <tr
                       key={id}
-                      className="text-sm text-slate-700 transition-colors hover:bg-orange-50/60"
+                      className="text-sm text-brand-ink transition-colors hover:bg-brand-paper"
                     >
                       <td className="px-5 py-2">
                         <div className="flex items-center gap-3">
@@ -210,7 +242,7 @@ export default function MyBooksTable({
                               className="h-[52px] w-10 rounded-sm object-cover"
                             />
                           ) : (
-                            <span className="flex h-[52px] w-10 items-center justify-center rounded-sm bg-orange-50 text-orange-800">
+                            <span className="flex h-[52px] w-10 items-center justify-center rounded-sm bg-brand-paper text-brand-plum">
                               <BookOpen aria-hidden="true" size={18} />
                             </span>
                           )}
@@ -237,7 +269,8 @@ export default function MyBooksTable({
                           <button
                             type="button"
                             onClick={() => setEditingBook(book)}
-                            className="inline-flex items-center rounded-md border border-[#781868]/20 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-700 transition-colors hover:bg-slate-100"
+                            disabled={isSessionPending || Boolean(deletingId) || isSaving}
+                            className="inline-flex items-center rounded-md border border-brand-plum/20 bg-card px-2.5 py-1.5 text-xs text-brand-ink transition-colors hover:bg-brand-paper disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             <Pencil aria-hidden="true" size={13} className="mr-1" />
                             Edit
@@ -245,8 +278,8 @@ export default function MyBooksTable({
                           <button
                             type="button"
                             onClick={() => handleDelete(book, index)}
-                            disabled={Boolean(deletingId)}
-                            className="inline-flex items-center rounded-md border border-red-400/20 bg-red-400/10 px-2.5 py-1.5 text-xs text-red-700 transition-colors hover:bg-red-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={isSessionPending || Boolean(deletingId) || isSaving}
+                            className="inline-flex items-center rounded-md border border-brand-plum/20 bg-brand-paper px-2.5 py-1.5 text-xs text-brand-plum transition-colors hover:bg-brand-tint disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             {deletingId === id ? (
                               <LoaderCircle
@@ -280,10 +313,10 @@ export default function MyBooksTable({
           if (!open && !isSaving) setEditingBook(null);
         }}
       >
-        <DialogContent className="flex max-h-[85vh] max-h-[85dvh] w-full max-w-xl flex-col overflow-hidden border border-[#781868]/20 bg-white p-0 text-slate-900 sm:max-w-xl">
-          <DialogHeader className="shrink-0 border-b border-[#781868]/20 bg-white p-4 pr-12 sm:p-6 sm:pr-14">
+        <DialogContent className="flex max-h-[85dvh] w-[calc(100%-2rem)] max-w-3xl flex-col overflow-hidden border border-brand-plum/20 bg-card p-0 text-brand-ink sm:max-w-3xl">
+          <DialogHeader className="shrink-0 border-b border-brand-plum/20 border-t-4 border-t-brand-plum bg-card p-4 pr-12 text-brand-ink sm:p-6 sm:pr-14">
             <DialogTitle>Edit book</DialogTitle>
-            <DialogDescription className="text-slate-600">
+            <DialogDescription className="text-muted-foreground">
               Update the book details in your collection.
             </DialogDescription>
           </DialogHeader>
@@ -360,7 +393,7 @@ export default function MyBooksTable({
                 {(editingBook.imageUrl ??
                   editingBook.bookImage ??
                   editingBook.bookImageUrl) && (
-                  <div className="relative mx-auto aspect-[2/3] max-h-48 w-32 overflow-hidden rounded-lg border border-[#781868]/20 bg-orange-50">
+                  <div className="relative mx-auto aspect-[3/4] w-full max-w-48 overflow-hidden rounded-lg border border-brand-plum/20 bg-brand-paper">
                     <Image
                       src={
                         editingBook.imageUrl ??
@@ -403,19 +436,19 @@ export default function MyBooksTable({
                   />
                 </label>
               </div>
-              <DialogFooter className="mx-0 mb-0 shrink-0 rounded-none border-[#781868]/20 bg-white p-4">
+              <DialogFooter className="mx-0 mb-0 shrink-0 rounded-none border-brand-plum/20 bg-card p-4">
                 <button
                   type="button"
                   onClick={() => setEditingBook(null)}
                   disabled={isSaving}
-                  className="h-9 rounded-md border border-[#781868]/20 px-3 text-sm text-slate-900/75 hover:bg-slate-50 disabled:opacity-50"
+                  className="h-9 rounded-md border border-brand-plum/20 px-3 text-sm text-brand-ink hover:bg-brand-paper disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-emerald-300 px-3 text-sm font-medium text-[#201028] hover:bg-emerald-400 disabled:opacity-50"
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-brand-cta px-3 text-sm font-medium text-white hover:bg-brand-cta-hover disabled:opacity-50"
                 >
                   {isSaving && (
                     <LoaderCircle

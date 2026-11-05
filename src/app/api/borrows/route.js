@@ -23,9 +23,28 @@ function getBorrowList(payload) {
   return null;
 }
 
+async function getUpstreamErrorMessage(response, fallbackMessage) {
+  const responseText = await response.text();
+  if (!responseText) return fallbackMessage;
+
+  try {
+    const payload = JSON.parse(responseText);
+    return typeof payload?.message === "string"
+      ? payload.message
+      : responseText;
+  } catch {
+    return responseText;
+  }
+}
+
+function getUpstreamErrorStatus(status) {
+  return status >= 500 ? 502 : status;
+}
+
 export async function GET(request) {
+  const reqHeaders = await headers();
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: reqHeaders,
   });
 
   if (!session) {
@@ -35,17 +54,40 @@ export async function GET(request) {
     );
   }
 
+  const authorization =
+    (await auth.api.getToken({ headers: reqHeaders }).then((t) => (t?.token ? `Bearer ${t.token}` : null)));
+
+  if (!authorization) {
+    return NextResponse.json(
+      { message: "Please log in to check your borrowed books." },
+      { status: 401 },
+    );
+  }
+
+  const authHeaders = {
+    "Content-Type": "application/json",
+    Authorization: authorization,
+  };
+
   const bookId = new URL(request.url).searchParams.get("bookId");
   const backendUrl = new URL(BORROWS_API_URL);
   backendUrl.searchParams.set("email", session.user.email);
 
   try {
-    const response = await fetch(backendUrl, { cache: "no-store" });
+    const response = await fetch(backendUrl, {
+      headers: { ...authHeaders },
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: "Could not check your borrowed books." },
-        { status: response.status === 401 || response.status === 403 ? response.status : 502 },
+        {
+          message: await getUpstreamErrorMessage(
+            response,
+            "Could not check your borrowed books.",
+          ),
+        },
+        { status: getUpstreamErrorStatus(response.status) },
       );
     }
 
@@ -75,13 +117,21 @@ export async function GET(request) {
     if (bookId) {
       const bookResponse = await fetch(
         `${BOOKS_API_URL}/${encodeURIComponent(bookId)}`,
-        { cache: "no-store" },
+        {
+          headers: { ...authHeaders },
+          cache: "no-store",
+        },
       );
 
       if (!bookResponse.ok) {
         return NextResponse.json(
-          { message: "Could not check this book's availability." },
-          { status: 502 },
+          {
+            message: await getUpstreamErrorMessage(
+              bookResponse,
+              "Could not check this book's availability.",
+            ),
+          },
+          { status: getUpstreamErrorStatus(bookResponse.status) },
         );
       }
 
@@ -114,8 +164,9 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const reqHeaders = await headers();
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: reqHeaders,
   });
 
   if (!session) {
@@ -146,11 +197,23 @@ export async function POST(request) {
       { status: 400 },
     );
   }
-
   try {
+    const authorization =
+      (await auth.api.getToken({ headers: reqHeaders }).then((t) => (t?.token ? `Bearer ${t.token}` : null)));
+
+    if (!authorization) {
+      return NextResponse.json(
+        { message: "Please log in to borrow a book." },
+        { status: 401 },
+      );
+    }
+
     const response = await fetch(BORROWS_API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authorization,
+      },
       body: JSON.stringify({
         ...borrow,
         userName: session.user.name,
@@ -174,8 +237,9 @@ export async function POST(request) {
 }
 
 export async function DELETE(request) {
+  const reqHeaders = await headers();
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: reqHeaders,
   });
 
   if (!session) {
@@ -203,15 +267,38 @@ export async function DELETE(request) {
     );
   }
 
+  const authorization =
+    (await auth.api.getToken({ headers: reqHeaders }).then((t) => (t?.token ? `Bearer ${t.token}` : null)));
+
+  if (!authorization) {
+    return NextResponse.json(
+      { message: "Please log in to return a book." },
+      { status: 401 },
+    );
+  }
+
+  const authHeaders = {
+    "Content-Type": "application/json",
+    Authorization: authorization,
+  };
+
   try {
     const listUrl = new URL(BORROWS_API_URL);
     listUrl.searchParams.set("email", session.user.email);
-    const listResponse = await fetch(listUrl, { cache: "no-store" });
+    const listResponse = await fetch(listUrl, {
+      headers: { ...authHeaders },
+      cache: "no-store",
+    });
 
     if (!listResponse.ok) {
       return NextResponse.json(
-        { message: "Could not verify this borrow record." },
-        { status: listResponse.status === 401 || listResponse.status === 403 ? listResponse.status : 502 },
+        {
+          message: await getUpstreamErrorMessage(
+            listResponse,
+            "Could not verify this borrow record.",
+          ),
+        },
+        { status: getUpstreamErrorStatus(listResponse.status) },
       );
     }
 
@@ -242,13 +329,24 @@ export async function DELETE(request) {
 
     const response = await fetch(
       `${BORROWS_API_URL}/${encodeURIComponent(borrowId)}`,
-      { method: "DELETE" },
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders,
+        },
+      },
     );
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: "Could not return this book. Please try again." },
-        { status: response.status >= 500 ? 502 : response.status },
+        {
+          message: await getUpstreamErrorMessage(
+            response,
+            "Could not return this book. Please try again.",
+          ),
+        },
+        { status: getUpstreamErrorStatus(response.status) },
       );
     }
 

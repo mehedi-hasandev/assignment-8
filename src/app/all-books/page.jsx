@@ -21,9 +21,9 @@ function BookGridSkeleton() {
       {Array.from({ length: 10 }, (_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-lg border border-[#781868]/20 bg-white"
+          className="overflow-hidden rounded-lg border border-brand-plum/20 bg-card"
         >
-          <div className="aspect-[2/3] animate-pulse bg-slate-100" />
+          <div className="aspect-[2/3] animate-pulse bg-slate-100 xl:aspect-[6/7]" />
           <div className="space-y-3 p-3">
             <div className="h-3 w-14 animate-pulse rounded bg-slate-100" />
             <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
@@ -99,17 +99,17 @@ async function BookCatalog() {
     return (
       <div
         role="alert"
-        className="rounded-xl border border-red-400/20 bg-red-50 px-6 py-10 text-center"
+        className="rounded-xl border border-brand-plum/20 bg-brand-paper px-6 py-10 text-center"
       >
-        <h2 className="font-semibold text-red-800">Unable to load books</h2>
-        <p className="mt-2 text-sm text-red-700">{errorMessage}</p>
+        <h2 className="font-semibold text-brand-ink">Unable to load books</h2>
+        <p className="mt-2 text-sm text-brand-plum">{errorMessage}</p>
       </div>
     );
   }
 
   if (books.length === 0) {
     return (
-      <div className="rounded-xl border border-[#781868]/20 bg-white px-6 py-14 text-center">
+      <div className="rounded-xl border border-brand-plum/20 bg-card px-6 py-14 text-center">
         <h2 className="text-lg font-semibold">No books yet</h2>
         <p className="mt-2 text-sm text-slate-600">
           The library is waiting for its first book.
@@ -134,13 +134,14 @@ async function BookCatalog() {
         return (
           <Card
             key={id}
-            className="h-full gap-0 overflow-hidden rounded-lg border border-[#781868]/20 bg-white py-0 text-slate-900 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-400/40 hover:shadow-lg hover:shadow-black/20"
+            className="h-full gap-0 overflow-hidden rounded-lg border border-brand-plum/20 bg-card py-0 text-foreground shadow-sm transition duration-200 hover:-translate-y-1 hover:border-brand-plum/40 hover:shadow-lg hover:shadow-black/20"
           >
             <BookCover
               imageUrl={imageUrl}
               title={title}
               author={author}
               index={index}
+              aspectClass="aspect-[2/3] xl:aspect-[6/7]"
             />
 
             <CardHeader className="min-w-0 gap-2 px-4 pt-4 pb-1">
@@ -156,7 +157,7 @@ async function BookCatalog() {
             <CardContent className="mt-auto px-4 pt-3 pb-4">
               <BookDetailsButton
                 bookId={id}
-                className="flex h-8 w-full items-center justify-center rounded-md bg-[#41283d] px-3 text-xs font-medium text-white transition-colors hover:bg-[#50284b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#41283d]"
+                className="flex h-8 w-full items-center justify-center rounded-md bg-brand-cta px-3 text-xs font-medium text-white transition-colors hover:bg-brand-cta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-cta"
               />
             </CardContent>
           </Card>
@@ -168,8 +169,8 @@ async function BookCatalog() {
 
 export default function AllBooksPage() {
   return (
-    <main className="min-h-[70vh] flex-1 bg-white text-slate-900">
-      <header className="border-b border-[#781868]/20 bg-orange-50 px-4 py-4 text-center">
+    <main className="min-h-[70vh] flex-1 bg-background text-foreground">
+      <header className="border-b border-brand-plum/20 bg-brand-paper px-4 py-4 text-center">
         <h1 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
           All Books
         </h1>
@@ -180,7 +181,7 @@ export default function AllBooksPage() {
 
       <section
         aria-label="Book catalog"
-        className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8"
+        className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 xl:max-w-6xl"
       >
         <Suspense fallback={<BookGridSkeleton />}>
           <BookCatalog />
