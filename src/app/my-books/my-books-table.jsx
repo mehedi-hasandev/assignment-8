@@ -76,6 +76,7 @@ export default function MyBooksTable({
         `/api/books/${encodeURIComponent(getBookId(editingBook, 0))}`,
         {
           method: "PATCH",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -140,6 +141,7 @@ export default function MyBooksTable({
       const token = await getTokenFromClient();
       const response = await fetch(`/api/books/${encodeURIComponent(id)}`, {
         method: "DELETE",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

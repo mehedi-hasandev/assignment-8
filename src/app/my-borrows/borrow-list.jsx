@@ -59,6 +59,7 @@ export default function BorrowList({ borrows }) {
       const token = await getTokenFromClient();
       const response = await fetch("/api/borrows", {
         method: "DELETE",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

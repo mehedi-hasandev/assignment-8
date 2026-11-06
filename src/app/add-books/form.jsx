@@ -177,6 +177,7 @@ export default function AddBookForm() {
       const token = await getTokenFromClient();
       const response = await fetch("/api/books", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

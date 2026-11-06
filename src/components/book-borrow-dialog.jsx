@@ -64,6 +64,7 @@ export default function BookBorrowDialog({
         const response = await fetch(
           `/api/borrows?bookId=${encodeURIComponent(bookId)}`,
           {
+            credentials: "include",
             headers: { Authorization: `Bearer ${token}` },
             cache: "no-store",
           },
@@ -147,6 +148,7 @@ export default function BookBorrowDialog({
       const statusResponse = await fetch(
         `/api/borrows?bookId=${encodeURIComponent(bookId)}`,
         {
+          credentials: "include",
           headers: { Authorization: `Bearer ${token}` },
           cache: "no-store",
         },
@@ -228,6 +230,7 @@ export default function BookBorrowDialog({
       const token = await getTokenFromClient();
       const response = await fetch("/api/borrows", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
